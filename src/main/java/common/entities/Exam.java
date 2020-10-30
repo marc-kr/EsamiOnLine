@@ -3,6 +3,7 @@ package main.java.common.entities;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 @Entity
@@ -101,6 +102,7 @@ public class Exam implements Serializable {
 
     @Override
     public String toString() {
-        return id + " - " + name + " " + examDate;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        return id + " - " + name + " " + dateFormat.format(examDate);
     }
 }
