@@ -27,6 +27,10 @@ public class ServerPanel extends JFrame {
             examInfo.add(new JLabel(e.toString()));
             JButton btnStart = new JButton("Avvia esame");
             btnStart.addActionListener((ev) -> {
+                ExamManager manager = serverEngine.openExam(e.getId());
+                new Thread(() -> {
+                    new ExamPanel(manager);
+                }).start();
                 //TODO avvio esame
                 System.out.println("Avvio esame " + e);
             });

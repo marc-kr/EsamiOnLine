@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class AnsweredQuestion implements Serializable {
     private Integer id;
     private Integer student;
-    private Integer answer;
+    private Answer answer;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -30,13 +30,13 @@ public class AnsweredQuestion implements Serializable {
         this.student = student;
     }
 
-    @Basic
-    @Column(name = "answer", nullable = false)
-    public Integer getAnswer() {
+
+    @JoinColumn(name = "answer")
+    public Answer getAnswer() {
         return answer;
     }
 
-    public void setAnswer(Integer answer) {
+    public void setAnswer(Answer answer) {
         this.answer = answer;
     }
 
@@ -50,8 +50,8 @@ public class AnsweredQuestion implements Serializable {
 
     @Override
     public int hashCode() {
-        int result;
-        result = 31 * student + answer;
+        int result=0;
+
         return result;
     }
 }

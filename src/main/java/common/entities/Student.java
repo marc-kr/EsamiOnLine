@@ -54,16 +54,16 @@ public class Student {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(! (o instanceof Student)) return false;
-        Student s = (Student) o;
-        return s.number == number && s.fiscalCode.equals(fiscalCode);
+       if(o == this) return true;
+       if(! (o instanceof Student)) return false;
+       Student s = (Student) o;
+       return s.number == number;
     }
 
     @Override
     public int hashCode() {
-        int result;
-        result = number * 31 + fiscalCode.hashCode();
-        return result;
+        int h = 0;
+        h += 31 * number;
+        return h;
     }
 }

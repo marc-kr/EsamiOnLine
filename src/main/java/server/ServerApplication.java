@@ -10,7 +10,7 @@ public class ServerApplication {
         try{
             ServerEngine serverEngine = new ServerEngine();
             Naming.rebind("server", serverEngine);
-            System.out.println(serverEngine.getAvailableExams());
+            //System.out.println(serverEngine.getAvailableExams());
             new Thread(()->{
                 new ServerPanel(serverEngine);
             }).start();

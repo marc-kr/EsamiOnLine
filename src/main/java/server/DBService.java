@@ -5,14 +5,8 @@ import main.java.common.entities.Exam;
 import main.java.common.entities.ExamRegistration;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.metamodel.Metamodel;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Servizio per la gestione della persistenza
@@ -83,10 +77,16 @@ public class DBService {
         }
     }
 
+    /**
+     * Ritorna true se lo studente è registrato per l'esame, false altrimenti
+     * */
     public boolean isStudentSubscribed(int studentId, int examId) {
         return getExamRegistration(entityManagerFactory.createEntityManager(), studentId, examId) != null;
     }
 
+    /**
+     * Restituisce un esame dal database
+     * */
     public Exam getExam(int examId) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         Query query = entityManager.createQuery("from Exam where id = ?1");

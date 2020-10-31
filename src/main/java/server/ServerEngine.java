@@ -5,12 +5,17 @@ import main.java.common.interfaces.ServerIF;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+//TODO utilizzare pattern Proxy
 
 public class ServerEngine extends UnicastRemoteObject implements ServerIF {
+    private Map<Integer, ExamManager> openedExams;
 
     protected ServerEngine() throws RemoteException {
-
+        openedExams = new HashMap<>();
     }
 
     @Override
@@ -30,8 +35,14 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
         }
     }
 
-    protected void openExam(int examId) {
+    protected ExamManager openExam(int examId) {
         Exam e = DBService.getInstance().getExam(examId);
-        //TODO implementare apertura esame
+        ExamManager manager = new ExamManager(e);
+        openedExams.put(examId, manager);
+        return manager;
+    }
+
+    protected void endExam(int examId) {
+        openedExams.remove(examId);
     }
 }
