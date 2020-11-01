@@ -62,8 +62,6 @@ public class Student {
 
     @Override
     public int hashCode() {
-        int h = 0;
-        h += 31 * number;
-        return h;
+        return number;
     }
 }

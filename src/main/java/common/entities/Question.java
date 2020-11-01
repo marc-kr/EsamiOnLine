@@ -45,13 +45,13 @@ public class Question implements Serializable {
         if(this == o) return true;
         if(! (o instanceof Question)) return false;
         Question q = (Question) o;
-        return q.id == id;
+        return q.number == number && q.exam.equals(exam);
     }
 
     @Override
     public int hashCode() {
         int result;
-        result = 31 * id;
+        result = 31 * id + exam.hashCode();
         return result;
     }
 

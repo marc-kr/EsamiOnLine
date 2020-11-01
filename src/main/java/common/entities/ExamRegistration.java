@@ -55,7 +55,7 @@ public class ExamRegistration {
         if (this == o) return true;
         if(!(o instanceof ExamRegistration)) return false;
         ExamRegistration examRegistration = (ExamRegistration) o;
-        return examRegistration.exam == exam && examRegistration.student == student;
+        return examRegistration.student == student && examRegistration.exam == exam;
     }
 
     @Override

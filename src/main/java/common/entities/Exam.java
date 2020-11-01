@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class Exam implements Serializable {
@@ -16,7 +17,7 @@ public class Exam implements Serializable {
     private Timestamp examDate;
     private Integer duration;
     private String description;
-    private Collection<Question> questions;
+    private List<Question> questions;
     private State state;
 
     @Enumerated(EnumType.STRING)
@@ -92,11 +93,11 @@ public class Exam implements Serializable {
     }
 
     @OneToMany(mappedBy = "exam")
-    public Collection<Question> getQuestions() {
+    public List<Question> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(Collection<Question> questions) {
+    public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
 

@@ -30,7 +30,7 @@ public class AnsweredQuestion implements Serializable {
         this.student = student;
     }
 
-
+    @ManyToOne
     @JoinColumn(name = "answer")
     public Answer getAnswer() {
         return answer;
@@ -45,13 +45,13 @@ public class AnsweredQuestion implements Serializable {
         if (this == o) return true;
         if(!(o instanceof AnsweredQuestion)) return false;
         AnsweredQuestion answeredQuestion = (AnsweredQuestion) o;
-        return answeredQuestion.student == student && answeredQuestion.answer == answer;
+        return student == answeredQuestion.student && answeredQuestion.answer.equals(answer);
     }
 
     @Override
     public int hashCode() {
         int result=0;
-
+        result = 31 * student + answer.hashCode();
         return result;
     }
 }
