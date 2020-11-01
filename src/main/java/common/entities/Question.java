@@ -2,6 +2,7 @@ package main.java.common.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 public class Question implements Serializable {
@@ -9,6 +10,7 @@ public class Question implements Serializable {
     private Integer number;
     private String description;
     private Exam exam;
+    private List<Answer> answers;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -64,4 +66,9 @@ public class Question implements Serializable {
     public void setExam(Exam exam) {
         this.exam = exam;
     }
+
+    @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    public List<Answer> getAnswers() { return answers; }
+
+    public void setAnswers(List<Answer> answers) { this.answers = answers; }
 }
