@@ -1,6 +1,6 @@
 package main.java.server;
 
-import main.java.common.interfaces.ServerIF;
+import main.java.server.view.ServerPanel;
 
 import java.rmi.Naming;
 

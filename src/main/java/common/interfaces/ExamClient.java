@@ -11,4 +11,5 @@ public interface ExamClient extends Remote {
     int getStudentId();
     void submitExam();
     List<AnsweredQuestion> getResult();
+    void update();
 }

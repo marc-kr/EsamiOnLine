@@ -3,6 +3,7 @@ package main.java.server;
 import main.java.common.entities.AnsweredQuestion;
 import main.java.common.entities.Exam;
 import main.java.common.interfaces.ExamClient;
+import main.java.server.services.DBService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ public class ExamManager {
         void exitAction(ExamManager examManager);
         void start(ExamManager examManager);
         void end(ExamManager examManager);
-
     }
 
     private enum ExamState implements ExamStateIF {
@@ -24,6 +24,7 @@ public class ExamManager {
             public void entryAction(ExamManager examManager) {
                 examManager.students = new HashMap<>();
             }
+
         },
         STARTED{
             @Override
@@ -74,8 +75,8 @@ public class ExamManager {
         public void end(ExamManager examManager) {
 
         }
-    }
 
+    }
 
     private Exam exam;
     private Map<Integer, ExamClient> students;
@@ -100,7 +101,6 @@ public class ExamManager {
     public void end() {
         currentState.end(this);
     }
-
 
     public Exam getExam() {
         return exam;

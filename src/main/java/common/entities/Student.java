@@ -64,4 +64,9 @@ public class Student {
     public int hashCode() {
         return number;
     }
+
+    @Override
+    public String toString() {
+        return number + " - " + firstName + " " + lastName;
+    }
 }

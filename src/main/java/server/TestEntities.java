@@ -3,6 +3,7 @@ package main.java.server;
 import main.java.common.entities.Answer;
 import main.java.common.entities.Exam;
 import main.java.common.entities.Question;
+import main.java.server.services.DBService;
 
 public class TestEntities {
     public static void main(String... args) {

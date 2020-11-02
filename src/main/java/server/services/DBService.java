@@ -1,4 +1,4 @@
-package main.java.server;
+package main.java.server.services;
 
 import main.java.common.entities.AnsweredQuestion;
 import main.java.common.entities.Exam;

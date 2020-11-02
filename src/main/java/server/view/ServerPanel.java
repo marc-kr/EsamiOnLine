@@ -1,6 +1,8 @@
-package main.java.server;
+package main.java.server.view;
 
 import main.java.common.entities.Exam;
+import main.java.server.ExamManager;
+import main.java.server.ServerEngine;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +16,7 @@ public class ServerPanel extends JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
-        contentPane = new JPanel();
+        contentPane = new JPanel(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         showExams();
         setContentPane(contentPane);
     }
@@ -23,7 +25,7 @@ public class ServerPanel extends JFrame {
         List<Exam> examList = serverEngine.getAvailableExams();
         contentPane.setLayout(new GridLayout(examList.size(), 1));
         for(Exam e : examList) {
-            JPanel examInfo = new JPanel(new GridLayout(1, 2));
+            JPanel examInfo = new JPanel();
             examInfo.add(new JLabel(e.toString()));
             JButton btnStart = new JButton("Avvia esame");
             btnStart.addActionListener((ev) -> {
@@ -31,6 +33,7 @@ public class ServerPanel extends JFrame {
                 new Thread(() -> {
                     new ExamPanel(manager);
                 }).start();
+                serverEngine.openExam(e.getId());
                 //TODO avvio esame
                 System.out.println("Avvio esame " + e);
             });
