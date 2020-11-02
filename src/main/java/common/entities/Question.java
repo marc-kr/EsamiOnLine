@@ -67,7 +67,7 @@ public class Question implements Serializable {
         this.exam = exam;
     }
 
-    @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     public List<Answer> getAnswers() { return answers; }
 
     public void setAnswers(List<Answer> answers) { this.answers = answers; }

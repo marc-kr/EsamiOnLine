@@ -1,6 +1,9 @@
 package main.java.client.view;
 
+import main.java.client.ExamClientImpl;
 import main.java.common.entities.Exam;
+import main.java.common.interfaces.ExamClient;
+import main.java.common.interfaces.ExamServer;
 import main.java.common.interfaces.ServerIF;
 
 import javax.swing.*;
@@ -159,7 +162,17 @@ public class ClientPanel extends JFrame {
     private void joinExam(int examId) {
         int number = getStudentNumber();
         if(number > 0) {
-            //TODO partecipa all'esame
+            try {
+                ExamServer examServer = server.joinExam(number, examId);
+                if(examServer != null) {
+                    ExamClientImpl examClient = new ExamClientImpl(number, examServer);
+                    new Thread(()-> {
+                        new ExamWindow(examClient);
+                    }).start();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
     }
 

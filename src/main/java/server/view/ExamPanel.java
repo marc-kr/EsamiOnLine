@@ -7,7 +7,8 @@ import java.awt.*;
 
 public class ExamPanel extends JFrame {
     private ExamManager manager;
-
+    private int timeLeft;
+    private Thread timer;
     public ExamPanel(ExamManager manager) {
         setExtendedState(MAXIMIZED_BOTH);
         setVisible(true);
@@ -85,10 +86,17 @@ public class ExamPanel extends JFrame {
 
             //---- btnStart ----
             btnStart.setText("Avvia");
+            btnStart.addActionListener((ev) -> {
+                startExam();
+            });
             panel2.add(btnStart);
+
 
             //---- btnEnd ----
             btnEnd.setText("Termina");
+            btnEnd.addActionListener((ev) -> {
+                stopExam();
+            });
             btnEnd.setEnabled(false);
             panel2.add(btnEnd);
         }
@@ -112,7 +120,34 @@ public class ExamPanel extends JFrame {
     }
 
     private void startExam() {
+        manager.start();
+        btnStart.setEnabled(false);
+        btnEnd.setEnabled(true);
+        startTimer();
+    }
+    private void stopExam() {
+        manager.end();
+        timer.interrupt();
+        btnEnd.setEnabled(false);
+    }
 
+    private void startTimer() {
+        int duration = manager.getExam().getDuration();
+        timeLeft = duration;
+        timer = new Thread(() -> {
+            while(timeLeft > 0) {
+                System.out.println(timeLeft);
+                lblTimeLeft.setText(String.format("%02d:%02d", timeLeft / 60, timeLeft % 60));
+                lblTimeLeft.repaint();
+                timeLeft--;
+                try {
+                    Thread.sleep(60000);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        });
+        timer.start();
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables

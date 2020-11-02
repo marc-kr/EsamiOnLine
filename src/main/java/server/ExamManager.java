@@ -3,19 +3,22 @@ package main.java.server;
 import main.java.common.entities.AnsweredQuestion;
 import main.java.common.entities.Exam;
 import main.java.common.interfaces.ExamClient;
+import main.java.common.interfaces.ExamServer;
 import main.java.server.services.DBService;
 
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExamManager {
-
+public class ExamManager extends UnicastRemoteObject implements ExamServer {
     private interface ExamStateIF{
         void entryAction(ExamManager examManager);
         void exitAction(ExamManager examManager);
         void start(ExamManager examManager);
         void end(ExamManager examManager);
+        void addStudent(ExamManager manager, ExamClient student);
     }
 
     private enum ExamState implements ExamStateIF {
@@ -25,20 +28,43 @@ public class ExamManager {
                 examManager.students = new HashMap<>();
             }
 
+            @Override
+            public void addStudent(ExamManager manager, ExamClient student) {
+                try {
+                    manager.students.put(student.getStudentId(), student);
+                    student.setExam(manager.exam);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void start(ExamManager examManager) {
+                examManager.transition(STARTED);
+            }
         },
         STARTED{
             @Override
             public void entryAction(ExamManager examManager) {
                 for(ExamClient student : examManager.students.values()) {
-                    student.setExam(examManager.exam);
+                    try {
+                        student.setExam(examManager.exam);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
-                //TODO notifica client inizio esame
+                examManager.notifyStudents();
             }
 
             @Override
             public void exitAction(ExamManager examManager) {
                 for(ExamClient student : examManager.students.values()){
-                    List<AnsweredQuestion> result = student.getResult();
+                    List<AnsweredQuestion> result = null;
+                    try {
+                        result = student.getResult();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     int r=0;
                     for(AnsweredQuestion question : result) {
                         if(question.getAnswer() == null)
@@ -46,13 +72,19 @@ public class ExamManager {
                         else if(question.getAnswer().getCorrect())
                             r+=3;
                     }
-                    DBService.getInstance().registerResult(examManager.exam.getId(), student.getStudentId(), r, result);
+                    try {
+                        DBService.getInstance().registerResult(examManager.exam.getId(), student.getStudentId(), r, result);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
-                //TODO notifica client termine esame
             }
         },
         ENDED{
-
+            @Override
+            public void entryAction(ExamManager examManager) {
+                examManager.notifyStudents();
+            }
         }
         ;
 
@@ -76,13 +108,18 @@ public class ExamManager {
 
         }
 
+        @Override
+        public void addStudent(ExamManager manager, ExamClient student) {
+
+        }
     }
 
     private Exam exam;
     private Map<Integer, ExamClient> students;
     private ExamStateIF currentState;
 
-    public ExamManager(Exam exam) {
+    public ExamManager(Exam exam) throws RemoteException {
+        super();
         this.exam = exam;
         transition(ExamState.OPENED);
     }
@@ -104,6 +141,22 @@ public class ExamManager {
 
     public Exam getExam() {
         return exam;
+    }
+
+    @Override
+    public void joinExam(ExamClient client) throws RemoteException{
+        currentState.addStudent(this, client);
+    }
+
+    void notifyStudents() {
+        System.out.println("Aggiorno i client");
+        for(ExamClient client : students.values()) {
+            try {
+                client.update();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

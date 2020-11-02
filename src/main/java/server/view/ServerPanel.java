@@ -29,13 +29,18 @@ public class ServerPanel extends JFrame {
             examInfo.add(new JLabel(e.toString()));
             JButton btnStart = new JButton("Avvia esame");
             btnStart.addActionListener((ev) -> {
-                ExamManager manager = serverEngine.openExam(e.getId());
-                new Thread(() -> {
-                    new ExamPanel(manager);
-                }).start();
-                serverEngine.openExam(e.getId());
-                //TODO avvio esame
-                System.out.println("Avvio esame " + e);
+                try{
+                    ExamManager manager = serverEngine.openExam(e.getId());
+                    new Thread(() -> {
+                        new ExamPanel(manager);
+                    }).start();
+                    serverEngine.openExam(e.getId());
+                    //TODO avvio esame
+                    System.out.println("Avvio esame " + e);
+                }catch(Exception ex) {
+                    ex.printStackTrace();
+                }
+
             });
             examInfo.add(btnStart);
             contentPane.add(examInfo);

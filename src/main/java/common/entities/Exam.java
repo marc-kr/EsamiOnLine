@@ -92,7 +92,7 @@ public class Exam implements Serializable {
         return id;
     }
 
-    @OneToMany(mappedBy = "exam")
+    @OneToMany(mappedBy = "exam", fetch = FetchType.EAGER)
     public List<Question> getQuestions() {
         return questions;
     }

@@ -1,6 +1,7 @@
 package main.java.server;
 
 import main.java.common.entities.Exam;
+import main.java.common.interfaces.ExamServer;
 import main.java.common.interfaces.ServerIF;
 import main.java.server.services.DBService;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 
 
 public class ServerEngine extends UnicastRemoteObject implements ServerIF {
-    private Map<Exam, ExamManager> openedExams;
+    private Map<Exam, ExamServer> openedExams;
 
     protected ServerEngine() throws RemoteException {
         openedExams = new HashMap<>();
@@ -35,13 +36,15 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
     }
 
     @Override
-    public void joinExam(int studentId, int examId) {
+    public ExamServer joinExam(int studentId, int examId) {
         if(!DBService.getInstance().isStudentSubscribed(studentId, examId)) {
-            //TODO gestire la non iscrizione
+            return null;
         }
+        Exam e = DBService.getInstance().getExam(examId);
+        return openedExams.get(e);
     }
 
-    public ExamManager openExam(int examId) {
+    public ExamManager openExam(int examId) throws RemoteException {
         Exam e = DBService.getInstance().getExam(examId);
         ExamManager manager = new ExamManager(e);
         openedExams.put(e, manager);

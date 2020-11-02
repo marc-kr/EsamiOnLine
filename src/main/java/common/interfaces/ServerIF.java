@@ -10,5 +10,5 @@ public interface ServerIF extends Remote {
     List<Exam> getAvailableExams() throws RemoteException;
     List<Exam> getOpenedExams() throws RemoteException;
     void subscribeToExam(int studentId, int examId) throws RemoteException;
-    void joinExam(int studentId, int examId) throws RemoteException;
+    ExamServer joinExam(int studentId, int examId) throws RemoteException;
 }
