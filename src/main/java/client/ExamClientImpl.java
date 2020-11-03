@@ -1,5 +1,6 @@
 package main.java.client;
 
+import main.java.client.view.ExamWindow;
 import main.java.common.entities.Answer;
 import main.java.common.entities.AnsweredQuestion;
 import main.java.common.entities.Exam;
@@ -13,16 +14,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExamClientImpl extends UnicastRemoteObject implements ExamClient {
+public class ExamClientImpl implements ExamClient {
     private ExamServer server;
     private int studentId;
     private Exam exam;
     private Map<Question, Answer> answers;
+    private ExamWindow window;
 
     public ExamClientImpl(int studentId, ExamServer server) throws RemoteException {
         this.server = server;
         this.studentId = studentId;
+        this.window = window;
+        UnicastRemoteObject.exportObject(this, 1098);
         server.joinExam(this);
+
+    }
+
+    public void setWindow(ExamWindow window) {
+        this.window = window;
     }
 
     public Exam getExam() { return exam; }
@@ -55,7 +64,9 @@ public class ExamClientImpl extends UnicastRemoteObject implements ExamClient {
     @Override
     public void update() {
         System.out.println("Aggiornamento dal server");
+        //window.update();
     }
+
 
     public void setAnswer(Question q, Answer a) {
         answers.put(q, a);

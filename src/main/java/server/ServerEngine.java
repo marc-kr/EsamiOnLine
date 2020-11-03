@@ -1,6 +1,7 @@
 package main.java.server;
 
 import main.java.common.entities.Exam;
+import main.java.common.exceptions.StudentNotSubscribedException;
 import main.java.common.interfaces.ExamServer;
 import main.java.common.interfaces.ServerIF;
 import main.java.server.services.DBService;
@@ -36,9 +37,9 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
     }
 
     @Override
-    public ExamServer joinExam(int studentId, int examId) {
+    public ExamServer joinExam(int studentId, int examId) throws StudentNotSubscribedException {
         if(!DBService.getInstance().isStudentSubscribed(studentId, examId)) {
-            return null;
+            throw new StudentNotSubscribedException();
         }
         Exam e = DBService.getInstance().getExam(examId);
         return openedExams.get(e);
@@ -47,7 +48,8 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
     public ExamManager openExam(int examId) throws RemoteException {
         Exam e = DBService.getInstance().getExam(examId);
         ExamManager manager = new ExamManager(e);
-        openedExams.put(e, manager);
+        ExamServer server = new main.java.server.ExamServer(manager);
+        openedExams.put(e, server);
         return manager;
     }
 

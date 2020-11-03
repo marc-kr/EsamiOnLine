@@ -30,7 +30,7 @@ public class ExamWindow extends JFrame {
     public ExamWindow(ExamClientImpl client) {
         this.client = client;
         initComponents();
-        setTitle("Esame di " + client.getExam().getName());
+        //setTitle("Esame di " + client.getExam().getName());
         setVisible(true);
     }
 
@@ -72,7 +72,7 @@ public class ExamWindow extends JFrame {
         btnSubmit.setText("Consegna");
         contentPane.add(btnSubmit, BorderLayout.SOUTH);
         contentPane.add(tabbedPane, BorderLayout.CENTER);
-        startExam();
+       // startExam();
         pack();
         setLocationRelativeTo(getOwner());
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
@@ -109,6 +109,10 @@ public class ExamWindow extends JFrame {
             }
         });
         timer.start();
+    }
+
+    public void update() {
+        startExam();
     }
 
     private void endExam() {

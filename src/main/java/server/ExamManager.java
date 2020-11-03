@@ -3,154 +3,56 @@ package main.java.server;
 import main.java.common.entities.AnsweredQuestion;
 import main.java.common.entities.Exam;
 import main.java.common.interfaces.ExamClient;
-import main.java.common.interfaces.ExamServer;
-import main.java.server.services.DBService;
 
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class ExamManager extends UnicastRemoteObject implements ExamServer {
-    private interface ExamStateIF{
-        void entryAction(ExamManager examManager);
-        void exitAction(ExamManager examManager);
-        void start(ExamManager examManager);
-        void end(ExamManager examManager);
-        void addStudent(ExamManager manager, ExamClient student);
-    }
+public class ExamManager {
+    private enum State {
+        OPENED, STARTED, ENDED;
+    };
 
-    private enum ExamState implements ExamStateIF {
-        OPENED{
-            @Override
-            public void entryAction(ExamManager examManager) {
-                examManager.students = new HashMap<>();
-            }
-
-            @Override
-            public void addStudent(ExamManager manager, ExamClient student) {
-                try {
-                    manager.students.put(student.getStudentId(), student);
-                    student.setExam(manager.exam);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void start(ExamManager examManager) {
-                examManager.transition(STARTED);
-            }
-        },
-        STARTED{
-            @Override
-            public void entryAction(ExamManager examManager) {
-                for(ExamClient student : examManager.students.values()) {
-                    try {
-                        student.setExam(examManager.exam);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
-                examManager.notifyStudents();
-            }
-
-            @Override
-            public void exitAction(ExamManager examManager) {
-                for(ExamClient student : examManager.students.values()){
-                    List<AnsweredQuestion> result = null;
-                    try {
-                        result = student.getResult();
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                    int r=0;
-                    for(AnsweredQuestion question : result) {
-                        if(question.getAnswer() == null)
-                            r-=1;
-                        else if(question.getAnswer().getCorrect())
-                            r+=3;
-                    }
-                    try {
-                        DBService.getInstance().registerResult(examManager.exam.getId(), student.getStudentId(), r, result);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        },
-        ENDED{
-            @Override
-            public void entryAction(ExamManager examManager) {
-                examManager.notifyStudents();
-            }
-        }
-        ;
-
-        @Override
-        public void entryAction(ExamManager examManager) {
-
-        }
-
-        @Override
-        public void exitAction(ExamManager examManager) {
-
-        }
-
-        @Override
-        public void start(ExamManager examManager) {
-
-        }
-
-        @Override
-        public void end(ExamManager examManager) {
-
-        }
-
-        @Override
-        public void addStudent(ExamManager manager, ExamClient student) {
-
-        }
-    }
-
+    private List<ExamClient> students;
     private Exam exam;
-    private Map<Integer, ExamClient> students;
-    private ExamStateIF currentState;
+    private State state;
 
-    public ExamManager(Exam exam) throws RemoteException {
-        super();
+    public ExamManager(Exam exam) {
         this.exam = exam;
-        transition(ExamState.OPENED);
-    }
-
-    private void transition(ExamStateIF nextState) {
-        if(currentState != null)
-            currentState.exitAction(this);
-        currentState = nextState;
-        currentState.entryAction(this);
-    }
-
-    public void start() {
-        currentState.start(this);
-    }
-
-    public void end() {
-        currentState.end(this);
+        students = new ArrayList<>();
+        state = State.OPENED;
     }
 
     public Exam getExam() {
         return exam;
     }
 
-    @Override
-    public void joinExam(ExamClient client) throws RemoteException{
-        currentState.addStudent(this, client);
+    public void start() {
+        System.out.println("Avvio esame, studenti partecipanti: " + students.size());
+        sendExam();
+        state = State.STARTED;
+        updateClients();
     }
 
-    void notifyStudents() {
-        System.out.println("Aggiorno i client");
-        for(ExamClient client : students.values()) {
+    public void end() {
+        state = State.ENDED;
+        updateClients();
+    }
+
+    private void sendExam() {
+        System.out.println("Invio esami ai " + students.size() + " studenti");
+        for(ExamClient client : students) {
+            try {
+                client.setExam(exam);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updateClients() {
+        System.out.println("Notifico i " + students.size() + " studenti");
+        for(ExamClient client : students) {
             try {
                 client.update();
             } catch (RemoteException e) {
@@ -159,4 +61,15 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
         }
     }
 
+    public void addStudent(ExamClient client) {
+        if(state == State.OPENED) {
+            try {
+                students.add(client);
+                System.out.println("Aggiunto studente " + client.getStudentId());
+                System.out.println("Totale: " + students.size());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

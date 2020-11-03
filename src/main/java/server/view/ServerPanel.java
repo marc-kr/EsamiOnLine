@@ -16,6 +16,7 @@ public class ServerPanel extends JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
+        setTitle("EOL - Server");
         contentPane = new JPanel(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
         showExams();
         setContentPane(contentPane);

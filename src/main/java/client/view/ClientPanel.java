@@ -2,6 +2,7 @@ package main.java.client.view;
 
 import main.java.client.ExamClientImpl;
 import main.java.common.entities.Exam;
+import main.java.common.exceptions.StudentNotSubscribedException;
 import main.java.common.interfaces.ExamClient;
 import main.java.common.interfaces.ExamServer;
 import main.java.common.interfaces.ServerIF;
@@ -163,11 +164,16 @@ public class ClientPanel extends JFrame {
         int number = getStudentNumber();
         if(number > 0) {
             try {
-                ExamServer examServer = server.joinExam(number, examId);
+                ExamServer examServer = null;
+                try {
+                    examServer = server.joinExam(number, examId);
+                } catch (StudentNotSubscribedException e) {
+                    e.printStackTrace();
+                }
                 if(examServer != null) {
                     ExamClientImpl examClient = new ExamClientImpl(number, examServer);
                     new Thread(()-> {
-                        new ExamWindow(examClient);
+                        examClient.setWindow( new ExamWindow(examClient));
                     }).start();
                 }
             } catch (RemoteException e) {
