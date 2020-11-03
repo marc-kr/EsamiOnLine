@@ -64,7 +64,7 @@ public class ExamClientImpl implements ExamClient {
     @Override
     public void update() {
         System.out.println("Aggiornamento dal server");
-        //window.update();
+        window.update();
     }
 
 

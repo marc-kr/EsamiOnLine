@@ -9,6 +9,7 @@ public class ExamPanel extends JFrame {
     private ExamManager manager;
     private int timeLeft;
     private Thread timer;
+
     public ExamPanel(ExamManager manager) {
         setExtendedState(MAXIMIZED_BOTH);
         setVisible(true);
