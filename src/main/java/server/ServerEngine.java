@@ -47,6 +47,7 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
 
     public ExamManager openExam(int examId) throws RemoteException {
         Exam e = DBService.getInstance().getExam(examId);
+        System.out.println("Creo ExamManager");
         ExamManager manager = new ExamManager(e);
         ExamServer server = new main.java.server.ExamServer(manager);
         openedExams.put(e, server);

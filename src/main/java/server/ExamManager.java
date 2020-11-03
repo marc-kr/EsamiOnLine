@@ -1,6 +1,6 @@
 package main.java.server;
 
-import main.java.common.entities.AnsweredQuestion;
+
 import main.java.common.entities.Exam;
 import main.java.common.interfaces.ExamClient;
 
@@ -13,14 +13,16 @@ public class ExamManager {
         OPENED, STARTED, ENDED;
     };
 
-    private List<ExamClient> students;
+    private final List<ExamClient> students;
     private Exam exam;
     private State state;
+    int a =1;
 
     public ExamManager(Exam exam) {
         this.exam = exam;
         students = new ArrayList<>();
         state = State.OPENED;
+        System.out.println("Creato oggetto" + this);
     }
 
     public Exam getExam() {
@@ -28,6 +30,7 @@ public class ExamManager {
     }
 
     public void start() {
+        System.out.println(this);
         System.out.println("Avvio esame, studenti partecipanti: " + students.size());
         sendExam();
         state = State.STARTED;
@@ -35,12 +38,15 @@ public class ExamManager {
     }
 
     public void end() {
+        System.out.println(this);
         state = State.ENDED;
         updateClients();
     }
 
     private void sendExam() {
+        System.out.println(this);
         System.out.println("Invio esami ai " + students.size() + " studenti");
+        System.out.println(a);
         for(ExamClient client : students) {
             try {
                 client.setExam(exam);
@@ -51,6 +57,7 @@ public class ExamManager {
     }
 
     private void updateClients() {
+        System.out.println(this);
         System.out.println("Notifico i " + students.size() + " studenti");
         for(ExamClient client : students) {
             try {
@@ -62,11 +69,14 @@ public class ExamManager {
     }
 
     public void addStudent(ExamClient client) {
+        System.out.println(this);
         if(state == State.OPENED) {
             try {
-                students.add(client);
+                a=2;
+                this.students.add(client);
                 System.out.println("Aggiunto studente " + client.getStudentId());
                 System.out.println("Totale: " + students.size());
+                System.out.println(a);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

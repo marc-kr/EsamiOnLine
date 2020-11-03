@@ -35,13 +35,11 @@ public class ServerPanel extends JFrame {
                     new Thread(() -> {
                         new ExamPanel(manager);
                     }).start();
-                    serverEngine.openExam(e.getId());
                     //TODO avvio esame
                     System.out.println("Avvio esame " + e);
                 }catch(Exception ex) {
                     ex.printStackTrace();
                 }
-
             });
             examInfo.add(btnStart);
             contentPane.add(examInfo);
