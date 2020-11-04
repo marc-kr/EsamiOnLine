@@ -2,6 +2,7 @@ package main.java.client.view;
 
 import main.java.client.ExamClientImpl;
 import main.java.common.entities.Exam;
+import main.java.common.exceptions.ExamInProgressException;
 import main.java.common.exceptions.StudentNotSubscribedException;
 import main.java.common.interfaces.ExamClient;
 import main.java.common.interfaces.ExamServer;
@@ -163,7 +164,21 @@ public class ClientPanel extends JFrame {
     private void joinExam(int examId) {
         int number = getStudentNumber();
         if(number > 0) {
-            try {
+            try{
+                ExamServer examServer = server.joinExam(number, examId);
+                ExamClientImpl examClient = new ExamClientImpl(number, examServer);
+                new Thread(() -> {
+                    examClient.setWindow(new ExamWindow(examClient));
+                }).start();
+            }catch(StudentNotSubscribedException ex) {
+                JOptionPane.showMessageDialog(this, "Non sei iscritto a questo esame", "Errore", JOptionPane.ERROR_MESSAGE);
+            }catch (RemoteException ex) {
+                JOptionPane.showMessageDialog(this, "Errore di rete: \" + ex.getMessage(), JOptionPane.ERROR_MESSAGE", "Errore", JOptionPane.ERROR_MESSAGE);
+            }catch (ExamInProgressException ex) {
+                JOptionPane.showMessageDialog(this, "L'esame è già iniziato!", "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+
+            /*try {
                 ExamServer examServer = null;
                 try {
                     examServer = server.joinExam(number, examId);
@@ -178,7 +193,7 @@ public class ClientPanel extends JFrame {
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
 

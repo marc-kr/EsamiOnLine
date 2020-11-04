@@ -5,6 +5,7 @@ import main.java.common.entities.Answer;
 import main.java.common.entities.AnsweredQuestion;
 import main.java.common.entities.Exam;
 import main.java.common.entities.Question;
+import main.java.common.exceptions.ExamInProgressException;
 import main.java.common.interfaces.ExamClient;
 import main.java.common.interfaces.ExamServer;
 
@@ -21,7 +22,7 @@ public class ExamClientImpl implements ExamClient {
     private Map<Question, Answer> answers;
     private ExamWindow window;
 
-    public ExamClientImpl(int studentId, ExamServer server) throws RemoteException {
+    public ExamClientImpl(int studentId, ExamServer server) throws RemoteException, ExamInProgressException {
         this.server = server;
         this.studentId = studentId;
         this.window = window;

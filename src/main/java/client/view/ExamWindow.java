@@ -26,6 +26,8 @@ import javax.swing.*;
 public class ExamWindow extends JFrame {
     private ExamClientImpl client;
     private Thread timer;
+    private String examState;
+
 
     public ExamWindow(ExamClientImpl client) {
         this.client = client;
@@ -90,6 +92,7 @@ public class ExamWindow extends JFrame {
     }
 
     private void startExam() {
+        setTitle("Esame di " + client.getExam().getName());
         showQuestions();
         startTimer();
     }
@@ -112,13 +115,23 @@ public class ExamWindow extends JFrame {
     }
 
     public void update() {
+        switch (examState) {
+            case "started":
+                startExam();
+                break;
+            case "ended":
+                endExam();
+        }
         startExam();
+    }
+
+    public void setExamState(String newState) {
+        examState = newState;
     }
 
     private void endExam() {
         timer.interrupt();
     }
-
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - Marco De Caria
@@ -128,8 +141,6 @@ public class ExamWindow extends JFrame {
     private JButton btnSubmit;
     private JTabbedPane tabbedPane;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
-
-
 
     private final class ExamPanel extends JPanel {
         private final int GIVEN_TIME = 5;
@@ -227,13 +238,13 @@ public class ExamWindow extends JFrame {
                             e.printStackTrace();
                         }
                         timeLeft--;
+                        if(timeLeft < 2) lblTimeLeft.setForeground(Color.RED);
                     }
                     disableButtons();
                 });
                 timer.start();
             }
         }
-
 
         // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
         // Generated using JFormDesigner Evaluation license - Marco De Caria

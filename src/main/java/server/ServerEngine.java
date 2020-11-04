@@ -1,6 +1,7 @@
 package main.java.server;
 
 import main.java.common.entities.Exam;
+import main.java.common.exceptions.StudentAlreadySubscribedException;
 import main.java.common.exceptions.StudentNotSubscribedException;
 import main.java.common.interfaces.ExamServer;
 import main.java.common.interfaces.ServerIF;
@@ -32,7 +33,8 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
     }
 
     @Override
-    public void subscribeToExam(int studentId, int examId) {
+    public void subscribeToExam(int studentId, int examId) throws StudentAlreadySubscribedException {
+        if(DBService.getInstance().isStudentSubscribed(studentId, examId)) throw new StudentAlreadySubscribedException();
         DBService.getInstance().subscribeStudent(studentId, examId);
     }
 
@@ -57,6 +59,5 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
     public void endExam(int examId) {
         openedExams.remove(examId);
     }
-
 
 }

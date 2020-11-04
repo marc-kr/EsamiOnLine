@@ -65,12 +65,11 @@ public class DBService {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
-            ExamRegistration registration = new ExamRegistration();
             for(AnsweredQuestion aq : answeredQuestions)
                 entityManager.persist(aq);
             ExamRegistration examRegistration = getExamRegistration(entityManager, studentId, examId);
             examRegistration.setResult(result);
-            entityManager.persist(examRegistration);
+            entityManager.merge(examRegistration);
             entityManager.getTransaction().commit();
         }finally {
             entityManager.close();
@@ -87,18 +86,27 @@ public class DBService {
     /**
      * Restituisce un esame dal database
      * */
-    public Exam getExam(int examId) {
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        Query query = entityManager.createQuery("from Exam where id = ?1");
-        query.setParameter(1, examId);
-        return (Exam) query.getSingleResult();
+    public Exam getExam(int examId){
+        try {
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            Query query = entityManager.createQuery("from Exam where id = ?1");
+            query.setParameter(1, examId);
+            return (Exam) query.getSingleResult();
+        }catch (NoResultException ex) {
+            return null;
+        }
     }
 
-    private ExamRegistration getExamRegistration(EntityManager entityManager, int studentId, int examId) {
-        Query q = entityManager.createQuery("from ExamRegistration er where er.exam = ?1 and er.student = ?2");
-        q.setParameter(1, examId); q.setParameter(2, studentId);
-        ExamRegistration examRegistration = (ExamRegistration) q.getSingleResult();
-        return examRegistration;
+    private ExamRegistration getExamRegistration(EntityManager entityManager, int studentId, int examId){
+        try {
+            Query q = entityManager.createQuery("from ExamRegistration er where er.exam = ?1 and er.student = ?2");
+            q.setParameter(1, examId);
+            q.setParameter(2, studentId);
+            ExamRegistration examRegistration = (ExamRegistration) q.getSingleResult();
+            return examRegistration;
+        }catch (NoResultException ex) {
+            return null;
+        }
     }
 
 }
