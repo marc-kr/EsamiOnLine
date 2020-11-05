@@ -23,7 +23,7 @@ public class Question implements Serializable {
     }
 
     @Basic
-    @Column(name = "number", nullable = false)
+    @Column(name = "number")
     public Integer getNumber() {
         return number;
     }

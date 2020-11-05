@@ -10,10 +10,8 @@ import java.util.List;
 
 public class ServerPanel extends JFrame {
     private JPanel contentPane;
-    private ServerEngine serverEngine;
 
-    public ServerPanel(ServerEngine serverEngine) {
-        this.serverEngine = serverEngine;
+    public ServerPanel() {
         setExtendedState(MAXIMIZED_BOTH);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
@@ -28,7 +26,7 @@ public class ServerPanel extends JFrame {
     }
 
     private void showExams() {
-        List<Exam> examList = serverEngine.getAvailableExams();
+        List<Exam> examList = ServerEngine.getInstance().getAvailableExams();
         contentPane.setLayout(new GridLayout(examList.size(), 1));
         for(Exam e : examList) {
             JPanel examInfo = new JPanel();
@@ -36,7 +34,7 @@ public class ServerPanel extends JFrame {
             JButton btnStart = new JButton("Avvia esame");
             btnStart.addActionListener((ev) -> {
                 try{
-                    ExamManager manager = serverEngine.openExam(e.getId());
+                    ExamManager manager = ServerEngine.getInstance().openExam(e.getId());
                     new Thread(() -> {
                         new ExamPanel(manager);
                     }).start();

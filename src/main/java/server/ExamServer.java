@@ -2,6 +2,7 @@ package main.java.server;
 
 import main.java.common.entities.Answer;
 import main.java.common.entities.AnsweredQuestion;
+import main.java.common.entities.Exam;
 import main.java.common.entities.Question;
 import main.java.common.interfaces.ExamClient;
 import main.java.server.services.DBService;
@@ -35,6 +36,11 @@ public class ExamServer extends UnicastRemoteObject implements main.java.common.
             else if(answer.getCorrect()) res += 3;
         }
         DBService.getInstance().registerResult(manager.getExam().getId(), studentId, res, answers);
+    }
+
+    @Override
+    public Exam getExam() throws RemoteException {
+        return manager.getExam();
     }
 
 

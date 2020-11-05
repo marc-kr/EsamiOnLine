@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,7 @@ public class Exam implements Serializable {
 
     private Integer id;
     private String name;
-    private Timestamp examDate;
+    private Date examDate;
     private Integer duration;
     private String description;
     private List<Question> questions;
@@ -52,11 +53,11 @@ public class Exam implements Serializable {
 
     @Basic
     @Column(name = "exam_date", nullable = false)
-    public Timestamp getExamDate() {
+    public Date getExamDate() {
         return examDate;
     }
 
-    public void setExamDate(Timestamp examDate) {
+    public void setExamDate(Date examDate) {
         this.examDate = examDate;
     }
 
@@ -93,7 +94,7 @@ public class Exam implements Serializable {
         return id;
     }
 
-    @OneToMany(mappedBy = "exam", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "exam", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public List<Question> getQuestions() {
         return questions;
     }

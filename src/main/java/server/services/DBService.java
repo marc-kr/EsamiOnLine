@@ -1,9 +1,6 @@
 package main.java.server.services;
 
-import main.java.common.entities.Answer;
-import main.java.common.entities.AnsweredQuestion;
-import main.java.common.entities.Exam;
-import main.java.common.entities.ExamRegistration;
+import main.java.common.entities.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -40,6 +37,18 @@ public class DBService {
         return query.getResultList();
     }
 
+    public void createExam(Exam e) {
+        EntityManager manager = entityManagerFactory.createEntityManager();
+        try {
+            manager.getTransaction().begin();
+            e.setId(0);
+            manager.persist(e);
+            manager.getTransaction().commit();
+        }finally {
+            manager.close();
+        }
+    }
+
     /**
      * Registra uno studente per partecipare a un esame
      * */
@@ -73,11 +82,6 @@ public class DBService {
                 System.out.println(answeredQuestion);
                 entityManager.persist(answeredQuestion);
             }
-            /*for(AnsweredQuestion aq : answeredQuestions) {
-                System.out.println(aq);
-                entityManager.persist(aq);
-                //entityManager.flush();
-            }*/
             ExamRegistration examRegistration = getExamRegistration(entityManager, studentId, examId);
             examRegistration.setResult(result);
             entityManager.merge(examRegistration);
@@ -122,6 +126,8 @@ public class DBService {
         }
     }
 
+
+
     private ExamRegistration getExamRegistration(EntityManager entityManager, int studentId, int examId){
         try {
             Query q = entityManager.createQuery("from ExamRegistration er where er.exam = ?1 and er.student = ?2");
@@ -133,4 +139,6 @@ public class DBService {
             return null;
         }
     }
+
+
 }

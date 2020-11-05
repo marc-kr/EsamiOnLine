@@ -17,9 +17,22 @@ import java.util.Map;
 
 public class ServerEngine extends UnicastRemoteObject implements ServerIF {
     private Map<Exam, ExamServer> openedExams;
+    private static ServerEngine instance;
 
-    protected ServerEngine() throws RemoteException {
+    private ServerEngine() throws RemoteException {
         openedExams = new HashMap<>();
+    }
+
+    public synchronized static ServerEngine getInstance(){
+        if(instance == null) {
+            try {
+                instance = new ServerEngine();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+        }
+        return instance;
     }
 
     @Override
