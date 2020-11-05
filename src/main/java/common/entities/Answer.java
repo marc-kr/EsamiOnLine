@@ -2,6 +2,10 @@ package main.java.common.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+/**
+ * @Author Marco De Caria
+ * */
+
 
 @Entity
 public class Answer implements Serializable {

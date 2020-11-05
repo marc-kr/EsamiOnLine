@@ -2,9 +2,7 @@ package main.java.client.view;
 
 import main.java.client.ExamClientImpl;
 import main.java.common.entities.Answer;
-import main.java.common.entities.Exam;
 import main.java.common.entities.Question;
-import main.java.common.interfaces.ExamClient;
 
 import javax.swing.*;
 
@@ -12,72 +10,50 @@ import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collection;
 import java.util.Collections;
-import javax.swing.*;
-/*
- * Created by JFormDesigner on Mon Nov 02 17:46:21 CET 2020
- */
-
-
 
 /**
  * @author Marco De Caria
+ * Interfaccia grafica per lo svolgimento dell'esame
  */
 public class ExamWindow extends JFrame {
     private ExamClientImpl client;
     private Thread timer;
+    private JLabel lblTimeLeft;
+    private JButton btnSubmit;
+    private JTabbedPane tabbedPane;
 
     public ExamWindow(ExamClientImpl client) {
         this.client = client;
         setExtendedState(MAXIMIZED_BOTH);
         initComponents();
-        //setTitle("Esame di " + client.getExam().getName());
+        setTitle("Esame di " + client.getExam().getName());
         setVisible(true);
     }
 
     private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - Marco De Caria
-        panel2 = new JPanel();
-        label1 = new JLabel();
+        JPanel panel2 = new JPanel();
+        JLabel label1 = new JLabel();
         lblTimeLeft = new JLabel();
         btnSubmit = new JButton();
         tabbedPane = new JTabbedPane();
-
         tabbedPane.getModel().addChangeListener((ev) -> {
             ExamPanel panel = (ExamPanel) tabbedPane.getSelectedComponent();
             System.out.println("EVENT");
             panel.startTimer();
         });
-        //======== this ========
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
-
-        //======== panel2 ========
-        {
-            panel2.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0
-                    ,0,0,0), "",javax.swing.border.TitledBorder.CENTER,javax.swing.border.TitledBorder.BOTTOM
-                    ,new java.awt.Font("Dia\u006cog",java.awt.Font.BOLD,12),java.awt.Color.red),
-                    panel2. getBorder()));panel2. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override public void propertyChange(java.beans.PropertyChangeEvent e
-        ){if("\u0062ord\u0065r".equals(e.getPropertyName()))throw new RuntimeException();}});
-            panel2.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-            //---- label1 ----
-            label1.setText("Tempo rimanente: ");
-            panel2.add(label1);
-            panel2.add(lblTimeLeft);
-        }
+        panel2.setLayout(new FlowLayout(FlowLayout.LEFT));
+        label1.setText("Tempo rimanente: ");
+        panel2.add(label1);
+        panel2.add(lblTimeLeft);
         contentPane.add(panel2, BorderLayout.NORTH);
-
-        //---- btnSubmit ----
         btnSubmit.setText("Consegna");
         contentPane.add(btnSubmit, BorderLayout.SOUTH);
         contentPane.add(tabbedPane, BorderLayout.CENTER);
-       // startExam();
         pack();
         setLocationRelativeTo(getOwner());
-        // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     private void showQuestions() {
@@ -125,26 +101,23 @@ public class ExamWindow extends JFrame {
         }
     }
 
-
     private void endExam() {
         timer.interrupt();
         new ResultWindow(client.getExam(), client.getResult()).setTitle("Risultato esame di " + client.getExam().getName());
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Evaluation license - Marco De Caria
-    private JPanel panel2;
-    private JLabel label1;
-    private JLabel lblTimeLeft;
-    private JButton btnSubmit;
-    private JTabbedPane tabbedPane;
-    // JFormDesigner - End of variables declaration  //GEN-END:variables
-
+    /**
+     * Pannello per la visualizzazione della domanda con le relative risposte
+     * */
     private final class ExamPanel extends JPanel {
         private final int GIVEN_TIME = 5;
         private Question question;
         private Thread timer;
+        private JTextArea txtQuestion;
+        private JPanel answersPanel;
+        private JLabel lblTimeLeft;
+        private ButtonGroup buttonGroup;
 
         public ExamPanel(Question question) {
             this.question = question;
@@ -155,13 +128,11 @@ public class ExamWindow extends JFrame {
         }
 
         private void initComponents() {
-            // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-            // Generated using JFormDesigner Evaluation license - Marco De Caria
-            scrollPane1 = new JScrollPane();
+            JScrollPane scrollPane1 = new JScrollPane();
             txtQuestion = new JTextArea();
             answersPanel = new JPanel();
-            panel1 = new JPanel();
-            label1 = new JLabel();
+            JPanel panel1 = new JPanel();
+            JLabel label1 = new JLabel();
             lblTimeLeft = new JLabel("Attendi l'inizio dell'esame");
             buttonGroup = new ButtonGroup();
             txtQuestion.setText(question.getDescription());
@@ -173,46 +144,17 @@ public class ExamWindow extends JFrame {
                 buttonGroup.add(button);
                 answersPanel.add(button);
             }
-
-            //======== this ========
-            setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder
-                    ( 0, 0, 0, 0) , "", javax. swing. border. TitledBorder. CENTER, javax. swing. border
-                    . TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt
-                    . Color. red) , getBorder( )) );  addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void
-            propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r" .equals (e .getPropertyName () )) throw new RuntimeException( )
-                    ; }} );
-            setLayout(new BorderLayout());
-
-            //======== scrollPane1 ========
-            {
-
-                //---- txtQuestion ----
-                txtQuestion.setEditable(false);
-                scrollPane1.setViewportView(txtQuestion);
-            }
+            txtQuestion.setEditable(false);
+            scrollPane1.setViewportView(txtQuestion);
             add(scrollPane1, BorderLayout.NORTH);
-
-            //======== answersPanel ========
-            {
-                answersPanel.setLayout(new BoxLayout(answersPanel, BoxLayout.Y_AXIS));
-            }
+            answersPanel.setLayout(new BoxLayout(answersPanel, BoxLayout.Y_AXIS));
             add(answersPanel, BorderLayout.CENTER);
-
-            //======== panel1 ========
-            {
-                panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-                //---- label1 ----
-                label1.setText("Tempo rimanente per la risposta: ");
-                panel1.add(label1);
-
-                //---- lblTimeLeft ----
-                lblTimeLeft.setText("0");
-                panel1.add(lblTimeLeft);
-            }
+            panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
+            label1.setText("Tempo rimanente per la risposta: ");
+            panel1.add(label1);
+            lblTimeLeft.setText("0");
+            panel1.add(lblTimeLeft);
             add(panel1, BorderLayout.SOUTH);
-            // JFormDesigner - End of component initialization  //GEN-END:initComponents
-
         }
 
         private void disableButtons() {
@@ -246,17 +188,7 @@ public class ExamWindow extends JFrame {
             }
         }
 
-        // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-        // Generated using JFormDesigner Evaluation license - Marco De Caria
-        private JScrollPane scrollPane1;
-        private JTextArea txtQuestion;
-        private JPanel answersPanel;
-        private JPanel panel1;
-        private JLabel label1;
-        private JLabel lblTimeLeft;
-        private ButtonGroup buttonGroup;
-        // JFormDesigner - End of variables declaration  //GEN-END:variables
-    }
 
+    }
 }
 

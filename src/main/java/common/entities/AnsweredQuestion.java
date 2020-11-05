@@ -2,6 +2,9 @@ package main.java.common.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+/**
+ * @Author Marco De Caria
+ * */
 
 @Entity
 @Table(name = "answered_question", schema = "online_exams")

@@ -1,13 +1,10 @@
 package main.java.common.interfaces;
 
 import main.java.common.entities.Answer;
-import main.java.common.entities.AnsweredQuestion;
-import main.java.common.entities.Exam;
 import main.java.common.entities.Question;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Map;
 
 public interface ExamClient extends Remote {

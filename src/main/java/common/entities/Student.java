@@ -5,6 +5,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/**
+ * @Author Marco De Caria
+ * */
+
+
 @Entity
 public class Student {
     private Integer number;

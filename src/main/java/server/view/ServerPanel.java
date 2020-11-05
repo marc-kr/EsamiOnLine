@@ -8,6 +8,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+/**
+ * @Author Marco De Caria
+ * Pannello di controllo dal quale il docente può avviare gli esami programmati per la giornata
+ * */
+
 public class ServerPanel extends JFrame {
     private JPanel contentPane;
 

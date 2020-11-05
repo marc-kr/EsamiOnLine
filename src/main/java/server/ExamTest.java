@@ -6,10 +6,11 @@ import main.java.common.entities.Exam;
 import main.java.server.services.DBService;
 import main.java.server.view.ExamPanel;
 
+
 public class ExamTest {
     public static void main(String... args) {
         try {
-            Exam e = DBService.getInstance().getExam(1);
+            Exam e = DBService.getInstance().getExam(12);
             ExamManager manager = new ExamManager(e);
             ExamServer server = new ExamServer(manager);
             ExamClientImpl examClient = new ExamClientImpl(189621, server);

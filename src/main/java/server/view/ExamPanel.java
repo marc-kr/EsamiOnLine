@@ -5,6 +5,12 @@ import main.java.server.ExamManager;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * @Author Marco De Caria
+ * Pannello per la gestione dell'esame. Il docente può visualizzare la lista dei partecipanti,
+ * avviare e terminare l'esame forzando la consegna da parte degli studenti.
+ * */
+
 public class ExamPanel extends JFrame {
     private ExamManager manager;
     private int timeLeft;
@@ -19,8 +25,6 @@ public class ExamPanel extends JFrame {
     }
 
     private void initComponents() {
-        // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - Marco De Caria
         scrollPane1 = new JScrollPane();
         studentsPanel = new JPanel();
         panel1 = new JPanel();
@@ -34,90 +38,40 @@ public class ExamPanel extends JFrame {
         panel3 = new JPanel();
         label2 = new JLabel();
         lblTimeLeft = new JLabel();
-
-        //======== this ========
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
-
-        //======== scrollPane1 ========
-        {
-
-            //======== studentsPanel ========
-            {
-                studentsPanel.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder
-                        (0,0,0,0), "",javax.swing.border.TitledBorder.CENTER,javax.swing.border
-                        .TitledBorder.BOTTOM,new java.awt.Font("D\u0069al\u006fg",java.awt.Font.BOLD,12),java.awt
-                        .Color.red),studentsPanel. getBorder()));studentsPanel. addPropertyChangeListener(new java.beans.PropertyChangeListener(){@Override public void
-            propertyChange(java.beans.PropertyChangeEvent e){if("\u0062or\u0064er".equals(e.getPropertyName()))throw new RuntimeException()
-                    ;}});
-                studentsPanel.setLayout(new BorderLayout());
-
-                //======== panel1 ========
-                {
-                    panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-                    //---- label1 ----
-                    label1.setText("Partecipanti: ");
-                    panel1.add(label1);
-
-                    //---- lblStudentsNumber ----
-                    lblStudentsNumber.setText("0");
-                    panel1.add(lblStudentsNumber);
-                }
-                studentsPanel.add(panel1, BorderLayout.NORTH);
-
-                //======== scrollPane2 ========
-                {
-
-                    //======== studentListPanel ========
-                    {
-                        studentListPanel.setLayout(new BoxLayout(studentListPanel, BoxLayout.Y_AXIS));
-                    }
-                    scrollPane2.setViewportView(studentListPanel);
-                }
-                studentsPanel.add(scrollPane2, BorderLayout.CENTER);
-            }
-            scrollPane1.setViewportView(studentsPanel);
-        }
+        studentsPanel.setLayout(new BorderLayout());
+        panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
+        label1.setText("Partecipanti: ");
+        panel1.add(label1);
+        lblStudentsNumber.setText("0");
+        panel1.add(lblStudentsNumber);
+        studentsPanel.add(panel1, BorderLayout.NORTH);
+        studentListPanel.setLayout(new BoxLayout(studentListPanel, BoxLayout.Y_AXIS));
+        scrollPane2.setViewportView(studentListPanel);
+        studentsPanel.add(scrollPane2, BorderLayout.CENTER);
+        scrollPane1.setViewportView(studentsPanel);
         contentPane.add(scrollPane1, BorderLayout.WEST);
-
-        //======== panel2 ========
-        {
-            panel2.setLayout(new GridLayout(1, 2));
-
-            //---- btnStart ----
-            btnStart.setText("Avvia");
-            btnStart.addActionListener((ev) -> {
-
-                startExam();
-            });
-            panel2.add(btnStart);
-
-
-            //---- btnEnd ----
-            btnEnd.setText("Termina");
-            btnEnd.addActionListener((ev) -> {
-                if(JOptionPane.showConfirmDialog(this, "Sicuro di voler terminare l'esame?",
+        panel2.setLayout(new GridLayout(1, 2));
+        btnStart.setText("Avvia");
+        btnStart.addActionListener((ev) -> {
+            startExam();
+        });
+        panel2.add(btnStart);
+        btnEnd.setText("Termina");
+        btnEnd.addActionListener((ev) -> {
+            if(JOptionPane.showConfirmDialog(this, "Sicuro di voler terminare l'esame?",
                         "Conferma", JOptionPane.OK_CANCEL_OPTION) == 0)
-                    stopExam();
+                stopExam();
             });
-            btnEnd.setEnabled(false);
-            panel2.add(btnEnd);
-        }
+        btnEnd.setEnabled(false);
+        panel2.add(btnEnd);
         contentPane.add(panel2, BorderLayout.SOUTH);
-
-        //======== panel3 ========
-        {
-            panel3.setLayout(new FlowLayout());
-
-            //---- label2 ----
-            label2.setText("Tempo mancante: ");
-            panel3.add(label2);
-
-            //---- lblTimeLeft ----
-            lblTimeLeft.setText("Esame non iniziato");
-            panel3.add(lblTimeLeft);
-        }
+        panel3.setLayout(new FlowLayout());
+        label2.setText("Tempo mancante: ");
+        panel3.add(label2);
+        lblTimeLeft.setText("Esame non iniziato");
+        panel3.add(lblTimeLeft);
         contentPane.add(panel3, BorderLayout.NORTH);
         pack();
         setLocationRelativeTo(getOwner());
@@ -156,8 +110,6 @@ public class ExamPanel extends JFrame {
         timer.start();
     }
 
-    // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Evaluation license - Marco De Caria
     private JScrollPane scrollPane1;
     private JPanel studentsPanel;
     private JPanel panel1;

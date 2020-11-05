@@ -2,7 +2,6 @@ package main.java.client;
 
 import main.java.client.view.ExamWindow;
 import main.java.common.entities.Answer;
-import main.java.common.entities.AnsweredQuestion;
 import main.java.common.entities.Exam;
 import main.java.common.entities.Question;
 import main.java.common.exceptions.ExamInProgressException;
@@ -12,9 +11,15 @@ import main.java.common.interfaces.ExamServer;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+/**
+ * @Author Marco De Caria
+ * Si occupa della comunicazione con il server durante lo svolgimento della prova.
+ * Mantiene le risposte fornite dallo studente mediante la prova e comunica al server il risultato al momento
+ * della consegna o al termine dell'esame.
+ * Riceve notifiche dal server per i cambiamenti di stato dell'esame.
+ * */
 public class ExamClientImpl implements ExamClient {
     private ExamServer server;
     private int studentId;
@@ -26,6 +31,7 @@ public class ExamClientImpl implements ExamClient {
         this.server = server;
         this.studentId = studentId;
         this.exam = server.getExam();
+        this.answers = new HashMap<>();
         UnicastRemoteObject.exportObject(this, 1098);
         server.joinExam(this);
     }

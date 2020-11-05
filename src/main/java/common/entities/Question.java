@@ -4,10 +4,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * @Author Marco De Caria
+ * */
+
 @Entity
 public class Question implements Serializable {
     private Integer id;
-    private Integer number;
     private String description;
     private Exam exam;
     private List<Answer> answers;
@@ -20,16 +23,6 @@ public class Question implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Basic
-    @Column(name = "number")
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
     }
 
     @Basic
@@ -47,13 +40,13 @@ public class Question implements Serializable {
         if(this == o) return true;
         if(! (o instanceof Question)) return false;
         Question q = (Question) o;
-        return q.number == number && q.exam.equals(exam);
+        return q.description.equals(description) && q.exam.equals(exam);
     }
 
     @Override
     public int hashCode() {
         int result;
-        result = 31 * id + exam.hashCode();
+        result = 31 * description.hashCode() + exam.hashCode();
         return result;
     }
 
@@ -76,7 +69,6 @@ public class Question implements Serializable {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", number=" + number +
                 ", description='" + description + '\'' +
                 '}';
     }

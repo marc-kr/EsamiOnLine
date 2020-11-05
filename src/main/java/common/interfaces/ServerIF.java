@@ -1,7 +1,6 @@
 package main.java.common.interfaces;
 
 import main.java.common.entities.Exam;
-import main.java.common.exceptions.ExamInProgressException;
 import main.java.common.exceptions.StudentAlreadySubscribedException;
 import main.java.common.exceptions.StudentNotSubscribedException;
 

@@ -2,6 +2,11 @@ package main.java.common.entities;
 
 import javax.persistence.*;
 
+/**
+ * @Author Marco De Caria
+ * */
+
+
 @Entity
 @Table(name = "exam_registration", schema = "online_exams")
 public class ExamRegistration {

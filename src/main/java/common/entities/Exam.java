@@ -8,6 +8,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @Author Marco De Caria
+ * */
+
+
 @Entity
 public class Exam implements Serializable {
     public enum State{

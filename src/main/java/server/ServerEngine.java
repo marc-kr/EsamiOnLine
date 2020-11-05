@@ -14,6 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @Author Marco De Caria
+ * Contiene tutta la logica di funzionamento del server. Si occupa delle richieste da parte dei client
+ * e avvia gli esami delegandone la gestione a istanze di ExamServer
+ * */
 
 public class ServerEngine extends UnicastRemoteObject implements ServerIF {
     private Map<Exam, ExamServer> openedExams;

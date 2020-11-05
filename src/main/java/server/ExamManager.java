@@ -10,6 +10,12 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @Author Marco De Caria
+ * Si occupa della gestione dell'esame, mantenendone lo stato e notificando i client al suo cambiamento.
+ * */
+
+
 public class ExamManager {
     private enum State {
         OPENED, STARTED, ENDED;
@@ -31,7 +37,7 @@ public class ExamManager {
         OPENED{
             @Override
             public void addStudent(ExamManager manager, ExamClient student) throws ExamInProgressException {
-                manager.addStudent(student);
+                manager.students.add(student);
             }
 
             @Override

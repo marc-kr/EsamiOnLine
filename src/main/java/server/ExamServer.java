@@ -13,6 +13,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @Author Marco De Caria
+ * Si occupa delle richieste del client durante lo svolgimento dell'esame.
+ * */
+
+
 public class ExamServer extends UnicastRemoteObject implements main.java.common.interfaces.ExamServer {
     private ExamManager manager;
 
