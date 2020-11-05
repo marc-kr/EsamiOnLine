@@ -71,4 +71,13 @@ public class Question implements Serializable {
     public List<Answer> getAnswers() { return answers; }
 
     public void setAnswers(List<Answer> answers) { this.answers = answers; }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", number=" + number +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

@@ -3,6 +3,7 @@ package main.java.client.view;
 import main.java.client.ExamClientImpl;
 import main.java.common.entities.Exam;
 import main.java.common.exceptions.ExamInProgressException;
+import main.java.common.exceptions.StudentAlreadySubscribedException;
 import main.java.common.exceptions.StudentNotSubscribedException;
 import main.java.common.interfaces.ExamClient;
 import main.java.common.interfaces.ExamServer;
@@ -19,8 +20,8 @@ public class ClientPanel extends JFrame {
     public ClientPanel(ServerIF server) {
         this.server = server;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        this.setVisible(true);
+        setExtendedState(MAXIMIZED_BOTH);
+        setVisible(true);
         initComponents();
         showExams();
     }
@@ -142,7 +143,7 @@ public class ClientPanel extends JFrame {
             repaint();
             pack();
         }catch(Exception ex) {
-
+            JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -177,7 +178,6 @@ public class ClientPanel extends JFrame {
             }catch (ExamInProgressException ex) {
                 JOptionPane.showMessageDialog(this, "L'esame è già iniziato!", "Errore", JOptionPane.ERROR_MESSAGE);
             }
-
             /*try {
                 ExamServer examServer = null;
                 try {
@@ -200,7 +200,15 @@ public class ClientPanel extends JFrame {
     private void subscribeExam(int examId) {
         int number = getStudentNumber();
         if(number > 0) {
-            //TODO iscrivi all'esame
+            try {
+                if(server.subscribeToExam(number, examId)){
+                    JOptionPane.showMessageDialog(this, "Iscrizione effettuata!", "Messaggio", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (RemoteException e) {
+                JOptionPane.showMessageDialog(this, "Errore: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            } catch (StudentAlreadySubscribedException e) {
+                JOptionPane.showMessageDialog(this, "Risulti già iscritto!", "Attenzione", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables

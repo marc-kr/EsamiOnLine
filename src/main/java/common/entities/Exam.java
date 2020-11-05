@@ -12,6 +12,7 @@ public class Exam implements Serializable {
     public enum State{
         CLOSED, OPENED, STARTED, ENDED;
     }
+
     private Integer id;
     private String name;
     private Timestamp examDate;

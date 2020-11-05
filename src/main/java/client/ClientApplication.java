@@ -3,6 +3,7 @@ package main.java.client;
 import main.java.client.view.ClientPanel;
 import main.java.common.interfaces.ServerIF;
 
+import javax.swing.*;
 import java.rmi.Naming;
 
 public class ClientApplication {

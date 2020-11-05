@@ -1,5 +1,6 @@
 package main.java.server.services;
 
+import main.java.common.entities.Answer;
 import main.java.common.entities.AnsweredQuestion;
 import main.java.common.entities.Exam;
 import main.java.common.entities.ExamRegistration;
@@ -61,12 +62,22 @@ public class DBService {
     /**
      * Registra il risultato dell'elaborato di uno studente
      * */
-    public void registerResult(int examId, int studentId, int result, List<AnsweredQuestion> answeredQuestions) {
+    public void registerResult(int examId, int studentId, int result, List<Answer> answers) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
-            for(AnsweredQuestion aq : answeredQuestions)
+            for(Answer answer : answers) {
+                AnsweredQuestion answeredQuestion = new AnsweredQuestion();
+                answeredQuestion.setExam(examId); answeredQuestion.setStudent(studentId);
+                answeredQuestion.setAnswer(answer);
+                System.out.println(answeredQuestion);
+                entityManager.persist(answeredQuestion);
+            }
+            /*for(AnsweredQuestion aq : answeredQuestions) {
+                System.out.println(aq);
                 entityManager.persist(aq);
+                //entityManager.flush();
+            }*/
             ExamRegistration examRegistration = getExamRegistration(entityManager, studentId, examId);
             examRegistration.setResult(result);
             entityManager.merge(examRegistration);
@@ -76,6 +87,20 @@ public class DBService {
         }
     }
 
+    public void updateExamState(int examId, String newState) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        try {
+            entityManager.getTransaction().begin();
+            Query q = entityManager.createQuery("from Exam where id = ?1");
+            q.setParameter(1, examId);
+            Exam e = (Exam) q.getSingleResult();
+            e.setState(Exam.State.valueOf(newState));
+            entityManager.merge(e);
+            entityManager.getTransaction().commit();
+        }finally {
+            entityManager.close();
+        }
+    }
     /**
      * Ritorna true se lo studente è registrato per l'esame, false altrimenti
      * */
@@ -108,5 +133,4 @@ public class DBService {
             return null;
         }
     }
-
 }

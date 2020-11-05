@@ -9,8 +9,10 @@ public class AnsweredQuestion implements Serializable {
     private Integer id;
     private Integer student;
     private Answer answer;
+    private int exam;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;
@@ -30,6 +32,7 @@ public class AnsweredQuestion implements Serializable {
         this.student = student;
     }
 
+
     @ManyToOne
     @JoinColumn(name = "answer")
     public Answer getAnswer() {
@@ -38,6 +41,16 @@ public class AnsweredQuestion implements Serializable {
 
     public void setAnswer(Answer answer) {
         this.answer = answer;
+    }
+
+    @Basic
+    @Column(name="exam", nullable = false)
+    public int getExam() {
+        return exam;
+    }
+
+    public void setExam(int exam) {
+        this.exam = exam;
     }
 
     @Override
@@ -53,5 +66,15 @@ public class AnsweredQuestion implements Serializable {
         int result=0;
         result = 31 * student + answer.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "AnsweredQuestion{" +
+                "id=" + id +
+                ", student=" + student +
+                ", answer=" + answer +
+                ", exam=" + exam +
+                '}';
     }
 }

@@ -9,7 +9,7 @@ public class ExamPanel extends JFrame {
     private ExamManager manager;
     private int timeLeft;
     private Thread timer;
-
+    private int studentCount=0;
     public ExamPanel(ExamManager manager) {
         setExtendedState(MAXIMIZED_BOTH);
         setVisible(true);
@@ -88,6 +88,7 @@ public class ExamPanel extends JFrame {
             //---- btnStart ----
             btnStart.setText("Avvia");
             btnStart.addActionListener((ev) -> {
+
                 startExam();
             });
             panel2.add(btnStart);
@@ -96,7 +97,9 @@ public class ExamPanel extends JFrame {
             //---- btnEnd ----
             btnEnd.setText("Termina");
             btnEnd.addActionListener((ev) -> {
-                stopExam();
+                if(JOptionPane.showConfirmDialog(this, "Sicuro di voler terminare l'esame?",
+                        "Conferma", JOptionPane.OK_CANCEL_OPTION) == 0)
+                    stopExam();
             });
             btnEnd.setEnabled(false);
             panel2.add(btnEnd);
@@ -130,6 +133,8 @@ public class ExamPanel extends JFrame {
         manager.end();
         timer.interrupt();
         btnEnd.setEnabled(false);
+        lblTimeLeft.setText("Esame concluso");
+        lblTimeLeft.setForeground(Color.RED);
     }
 
     private void startTimer() {

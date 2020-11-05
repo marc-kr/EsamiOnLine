@@ -12,6 +12,6 @@ import java.util.List;
 public interface ServerIF extends Remote {
     List<Exam> getAvailableExams() throws RemoteException;
     List<Exam> getOpenedExams() throws RemoteException;
-    void subscribeToExam(int studentId, int examId) throws RemoteException, StudentAlreadySubscribedException;
+    boolean subscribeToExam(int studentId, int examId) throws RemoteException, StudentAlreadySubscribedException;
     ExamServer joinExam(int studentId, int examId) throws RemoteException, StudentNotSubscribedException;
 }

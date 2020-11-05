@@ -64,4 +64,14 @@ public class ExamRegistration {
         result = 31 * exam + student;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ExamRegistration{" +
+                "id=" + id +
+                ", student=" + student +
+                ", exam=" + exam +
+                ", result=" + result +
+                '}';
+    }
 }

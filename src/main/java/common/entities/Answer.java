@@ -64,4 +64,14 @@ public class Answer implements Serializable {
     public void setQuestion(Question question) {
         this.question = question;
     }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", isCorrect=" + isCorrect +
+                ", question=" + question +
+                '}';
+    }
 }

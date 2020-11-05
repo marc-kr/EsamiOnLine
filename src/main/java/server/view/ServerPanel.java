@@ -11,6 +11,7 @@ import java.util.List;
 public class ServerPanel extends JFrame {
     private JPanel contentPane;
     private ServerEngine serverEngine;
+
     public ServerPanel(ServerEngine serverEngine) {
         this.serverEngine = serverEngine;
         setExtendedState(MAXIMIZED_BOTH);
@@ -18,6 +19,10 @@ public class ServerPanel extends JFrame {
         setVisible(true);
         setTitle("EOL - Server");
         contentPane = new JPanel(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        JButton button = new JButton("Aggiorna");
+        button.addActionListener((ev) -> {
+            showExams();
+        });
         showExams();
         setContentPane(contentPane);
     }

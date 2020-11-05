@@ -33,9 +33,10 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
     }
 
     @Override
-    public void subscribeToExam(int studentId, int examId) throws StudentAlreadySubscribedException {
+    public boolean subscribeToExam(int studentId, int examId) throws StudentAlreadySubscribedException {
         if(DBService.getInstance().isStudentSubscribed(studentId, examId)) throw new StudentAlreadySubscribedException();
         DBService.getInstance().subscribeStudent(studentId, examId);
+        return true;
     }
 
     @Override

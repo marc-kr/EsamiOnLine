@@ -9,6 +9,7 @@ import main.java.common.interfaces.ExamClient;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collection;
@@ -26,11 +27,10 @@ import javax.swing.*;
 public class ExamWindow extends JFrame {
     private ExamClientImpl client;
     private Thread timer;
-    private String examState;
-
 
     public ExamWindow(ExamClientImpl client) {
         this.client = client;
+        setExtendedState(MAXIMIZED_BOTH);
         initComponents();
         //setTitle("Esame di " + client.getExam().getName());
         setVisible(true);
@@ -81,6 +81,7 @@ public class ExamWindow extends JFrame {
     }
 
     private void showQuestions() {
+        System.out.println("Visualizzo domande");
         List<Question> questions = client.getExam().getQuestions();
         Collections.shuffle(questions);
         int i=1;
@@ -114,23 +115,21 @@ public class ExamWindow extends JFrame {
         timer.start();
     }
 
-    public void update() {
-        switch (examState) {
-            case "started":
+    public void update(String state) {
+        switch (state) {
+            case "STARTED":
                 startExam();
                 break;
-            case "ended":
+            case "ENDED":
                 endExam();
         }
-        startExam();
     }
 
-    public void setExamState(String newState) {
-        examState = newState;
-    }
 
     private void endExam() {
         timer.interrupt();
+        new ResultWindow(client.getExam(), client.getResult()).setTitle("Risultato esame di " + client.getExam().getName());
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
@@ -146,6 +145,7 @@ public class ExamWindow extends JFrame {
         private final int GIVEN_TIME = 5;
         private Question question;
         private Thread timer;
+
         public ExamPanel(Question question) {
             this.question = question;
             List<Answer> answerList = question.getAnswers();
@@ -162,7 +162,7 @@ public class ExamWindow extends JFrame {
             answersPanel = new JPanel();
             panel1 = new JPanel();
             label1 = new JLabel();
-            lblTimeLeft = new JLabel();
+            lblTimeLeft = new JLabel("Attendi l'inizio dell'esame");
             buttonGroup = new ButtonGroup();
             txtQuestion.setText(question.getDescription());
             for(Answer answer : question.getAnswers()) {

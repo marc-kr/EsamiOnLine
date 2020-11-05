@@ -25,10 +25,9 @@ public class ExamClientImpl implements ExamClient {
     public ExamClientImpl(int studentId, ExamServer server) throws RemoteException, ExamInProgressException {
         this.server = server;
         this.studentId = studentId;
-        this.window = window;
+        this.exam = server.getExam();
         UnicastRemoteObject.exportObject(this, 1098);
         server.joinExam(this);
-
     }
 
     public void setWindow(ExamWindow window) {
@@ -38,34 +37,31 @@ public class ExamClientImpl implements ExamClient {
     public Exam getExam() { return exam; }
 
     @Override
-    public void setExam(Exam exam) {
-        this.exam = exam;
-        answers = new HashMap<>();
-        for(Question question : exam.getQuestions()) {
-            answers.put(question, null);
-        }
-        System.out.println("Ricevuto esame " + exam);
-    }
-
-    @Override
     public int getStudentId() {
         return studentId;
     }
 
     @Override
-    public void submitExam() {
-
+    public void submitExam() throws RemoteException {
+        System.out.println("Invio ");
+        System.out.println(answers.size());
+        for(Answer a : answers.values())
+            System.out.println(a);
+        server.submitResult(studentId, answers);
     }
 
     @Override
-    public List<AnsweredQuestion> getResult() {
-        return null;
+    public Map<Question, Answer> getResult() {
+        return answers;
     }
 
     @Override
-    public void update() {
-        System.out.println("Aggiornamento dal server");
-        window.update();
+    public void update(String state) throws RemoteException {
+        System.out.println("Aggiornamento dal server " + state);
+        if(state.equals("ENDED")){
+            submitExam();
+        }
+        window.update(state);
     }
 
 
