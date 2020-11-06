@@ -86,6 +86,8 @@ public class DBService {
             examRegistration.setResult(result);
             entityManager.merge(examRegistration);
             entityManager.getTransaction().commit();
+        }catch (Exception ex) {
+            ex.printStackTrace();
         }finally {
             entityManager.close();
         }

@@ -26,6 +26,7 @@ public class ResultWindow extends JFrame {
         setExtendedState(MAXIMIZED_BOTH);
         initComponents();
         showSolution();
+        setExtendedState(MAXIMIZED_BOTH);
     }
 
     private void initComponents() {
@@ -38,8 +39,8 @@ public class ResultWindow extends JFrame {
         contentPane.setLayout(new BorderLayout());
         panel1.setLayout(new FlowLayout());
         label1.setText("Punteggio ottenuto: ");
-        panel1.add(label1);
         lblResult.setText("0");
+        panel1.add(label1);
         panel1.add(lblResult);
         contentPane.add(panel1, BorderLayout.NORTH);
         solutionPanel.setLayout(new BoxLayout(solutionPanel, BoxLayout.Y_AXIS));
@@ -48,13 +49,11 @@ public class ResultWindow extends JFrame {
         pack();
     }
 
-
-
     private void showSolution() {
         int result=0;
-        for(Question q : answers.keySet()) {
+        for(Question q : exam.getQuestions()) {
             if(answers.get(q) == null) result -= 1;
-            else if(answers.get(q).getCorrect()) result += 3;
+            else if (answers.get(q).getCorrect()) result += 3;
             SolutionPanel panel = new SolutionPanel(q, answers.get(q));
             solutionPanel.add(panel);
         }
@@ -81,7 +80,7 @@ public class ResultWindow extends JFrame {
                 JCheckBox checkBox = new JCheckBox();
                 checkBox.setEnabled(false);
                 checkBox.setText(answer.getDescription());
-                if(answer.getCorrect()) checkBox.setForeground(Color.GREEN);
+                if(answer.getCorrect()) checkBox.setBackground(Color.GREEN);
                 if(a != null && a.equals(answer)) checkBox.setSelected(true);
                 answersPanel.add(checkBox);
             }
@@ -94,6 +93,5 @@ public class ResultWindow extends JFrame {
             scrollPane1.setViewportView(panel1);
             add(scrollPane1, BorderLayout.CENTER);
         }
-
     }
 }

@@ -16,12 +16,13 @@ public class ExamPanel extends JFrame {
     private int timeLeft;
     private Thread timer;
     private int studentCount=0;
+
     public ExamPanel(ExamManager manager) {
-        setExtendedState(MAXIMIZED_BOTH);
-        setVisible(true);
         setTitle(manager.getExam().getName());
         initComponents();
         this.manager = manager;
+        setExtendedState(MAXIMIZED_BOTH);
+        setVisible(true);
     }
 
     private void initComponents() {

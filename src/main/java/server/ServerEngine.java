@@ -70,8 +70,7 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
         Exam e = DBService.getInstance().getExam(examId);
         System.out.println("Creo ExamManager");
         ExamManager manager = new ExamManager(e);
-        ExamServer server = new main.java.server.ExamServer(manager);
-        openedExams.put(e, server);
+        openedExams.put(e, manager);
         return manager;
     }
 

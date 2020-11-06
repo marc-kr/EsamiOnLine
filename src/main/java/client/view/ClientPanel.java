@@ -18,6 +18,7 @@ import java.util.List;
  * Interfaccia grafica del client dalla quale lo studente può iscriversi agli esami disponibili
  * e partecipare a quelli in corso.
  * */
+
 public class ClientPanel extends JFrame {
     private JButton btnRefresh;
     private JPanel container;
@@ -29,10 +30,10 @@ public class ClientPanel extends JFrame {
         this.server = server;
         setTitle("EOL - Client");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setExtendedState(MAXIMIZED_BOTH);
-        setVisible(true);
         initComponents();
         showExams();
+        setExtendedState(MAXIMIZED_BOTH);
+        setVisible(true);
     }
 
     private void initComponents() {
@@ -101,8 +102,8 @@ public class ClientPanel extends JFrame {
                 panel.add(button);
                 openedExams.add(panel);
             }
+            revalidate();
             repaint();
-            pack();
         }catch(Exception ex) {
             JOptionPane.showMessageDialog(this, "Errore: " + ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }

@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Collections;
@@ -19,22 +20,23 @@ import java.util.Collections;
 public class ExamWindow extends JFrame {
     private ExamClientImpl client;
     private Thread timer;
-    private JLabel lblTimeLeft;
+    private JLabel lblExamTimeLeft;
     private JButton btnSubmit;
     private JTabbedPane tabbedPane;
 
     public ExamWindow(ExamClientImpl client) {
         this.client = client;
-        setExtendedState(MAXIMIZED_BOTH);
         initComponents();
         setTitle("Esame di " + client.getExam().getName());
+        setExtendedState(MAXIMIZED_BOTH);
         setVisible(true);
     }
 
     private void initComponents() {
         JPanel panel2 = new JPanel();
         JLabel label1 = new JLabel();
-        lblTimeLeft = new JLabel();
+        lblExamTimeLeft = new JLabel();
+        lblExamTimeLeft.setText("Attendi l'avvio della prova");
         btnSubmit = new JButton();
         tabbedPane = new JTabbedPane();
         tabbedPane.getModel().addChangeListener((ev) -> {
@@ -47,13 +49,28 @@ public class ExamWindow extends JFrame {
         panel2.setLayout(new FlowLayout(FlowLayout.LEFT));
         label1.setText("Tempo rimanente: ");
         panel2.add(label1);
-        panel2.add(lblTimeLeft);
+        panel2.add(lblExamTimeLeft);
         contentPane.add(panel2, BorderLayout.NORTH);
         btnSubmit.setText("Consegna");
+        btnSubmit.addActionListener((ev) -> {
+            submitExam();
+        });
         contentPane.add(btnSubmit, BorderLayout.SOUTH);
         contentPane.add(tabbedPane, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(getOwner());
+    }
+
+    private void submitExam() {
+        try {
+            client.submitExam();
+            this.removeAll();
+            this.setContentPane(new JPanel(new BorderLayout()));
+            this.add(new JLabel("Attendi il termine della prova per visualizzare il risultato"), BorderLayout.CENTER);
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(this, "Errore: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+        }
+        //endExam();
     }
 
     private void showQuestions() {
@@ -79,8 +96,8 @@ public class ExamWindow extends JFrame {
             int timeLeft = client.getExam().getDuration();
             try {
                 while(timeLeft > 0) {
-                    lblTimeLeft.setText(String.format("%02d:%02d", timeLeft / 60,timeLeft%60));
-                    if(timeLeft < 15) lblTimeLeft.setForeground(Color.RED);
+                    lblExamTimeLeft.setText(String.format("%02d:%02d", timeLeft / 60,timeLeft%60));
+                    if(timeLeft < 15) lblExamTimeLeft.setForeground(Color.RED);
                     Thread.sleep(60000);
                     timeLeft--;
                 }
@@ -128,6 +145,7 @@ public class ExamWindow extends JFrame {
         }
 
         private void initComponents() {
+            setLayout(new BorderLayout());
             JScrollPane scrollPane1 = new JScrollPane();
             txtQuestion = new JTextArea();
             answersPanel = new JPanel();
@@ -187,8 +205,6 @@ public class ExamWindow extends JFrame {
                 timer.start();
             }
         }
-
-
     }
 }
 

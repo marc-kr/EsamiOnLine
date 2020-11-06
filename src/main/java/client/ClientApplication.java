@@ -4,10 +4,12 @@ import main.java.client.view.ClientPanel;
 import main.java.common.interfaces.ServerIF;
 
 import java.rmi.Naming;
+
 /**
  * @Author Marco De Caria
  * Applicazione client
  * */
+
 public class ClientApplication {
     public static void main(String... args) {
         try {

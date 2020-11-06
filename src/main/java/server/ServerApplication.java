@@ -8,8 +8,6 @@ import java.rmi.Naming;
  * @Author Marco De Caria
  * Applicazione server
  * */
-
-
 public class ServerApplication {
 
     public static void main(String... args) {

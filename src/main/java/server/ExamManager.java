@@ -1,22 +1,27 @@
 package main.java.server;
 
 
+import main.java.common.entities.Answer;
 import main.java.common.entities.Exam;
+import main.java.common.entities.Question;
 import main.java.common.exceptions.ExamInProgressException;
 import main.java.common.interfaces.ExamClient;
+import main.java.common.interfaces.ExamServer;
 import main.java.server.services.DBService;
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author Marco De Caria
  * Si occupa della gestione dell'esame, mantenendone lo stato e notificando i client al suo cambiamento.
  * */
 
-
-public class ExamManager {
+public class ExamManager extends UnicastRemoteObject implements ExamServer {
     private enum State {
         OPENED, STARTED, ENDED;
     };
@@ -97,12 +102,31 @@ public class ExamManager {
     private State state;
     private ExamStateIF currentState;
 
-    public ExamManager(Exam exam) {
+    public ExamManager(Exam exam) throws RemoteException{
+        super();
         this.exam = exam;
         students = new ArrayList<>();
         state = State.OPENED;
         transition(ExamState.OPENED);
         System.out.println("Creato oggetto" + this);
+    }
+
+    @Override
+    public void joinExam(ExamClient client) throws RemoteException, ExamInProgressException {
+        currentState.addStudent(this, client);
+    }
+
+    @Override
+    public void submitResult(int studentId, Map<Question, Answer> result) throws RemoteException {
+        int res=0;
+        List<Answer> answers = new LinkedList<>();
+        System.out.println(result.size());
+        for(Answer answer: result.values()) {
+            answers.add(answer);
+            if(answer == null) res -=1;
+            else if(answer.getCorrect()) res += 3;
+        }
+        DBService.getInstance().registerResult(exam.getId(), studentId, res, answers);
     }
 
     public Exam getExam() {
@@ -138,14 +162,6 @@ public class ExamManager {
     public void updateState() {
         updateClients(currentState.getName());
         DBService.getInstance().updateExamState(exam.getId(), currentState.getName());
-    }
-
-    public void addStudent(ExamClient client) {
-        try {
-            currentState.addStudent(this, client);
-        } catch (ExamInProgressException e) {
-            e.printStackTrace();
-        }
     }
 
     private void transition(ExamStateIF nextState) {
