@@ -68,7 +68,6 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF, ExamO
 
     public ExamManager openExam(int examId) throws RemoteException {
         Exam e = DBService.getInstance().getExam(examId);
-        System.out.println("Creo ExamManager");
         ExamManager manager = new ExamManager(e);
         manager.attach(this);
         openedExams.put(e, manager);
@@ -80,6 +79,7 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF, ExamO
         if(examManager.getState().equals("STARTED") || examManager.getState().equals("ENDED")) {
             System.out.println("L'esame " + examManager.getExam().getName() + " è iniziato/terminato");
             this.openedExams.remove(examManager.getExam());
+            examManager.detach(this);
         }
     }
 }

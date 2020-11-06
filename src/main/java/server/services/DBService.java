@@ -37,18 +37,6 @@ public class DBService {
         return query.getResultList();
     }
 
-    public void createExam(Exam e) {
-        EntityManager manager = entityManagerFactory.createEntityManager();
-        try {
-            manager.getTransaction().begin();
-            e.setId(0);
-            manager.persist(e);
-            manager.getTransaction().commit();
-        }finally {
-            manager.close();
-        }
-    }
-
     /**
      * Registra uno studente per partecipare a un esame
      * */
@@ -94,6 +82,7 @@ public class DBService {
     }
 
     public void updateExamState(int examId, String newState) {
+        System.out.println("Aggiorno esame " + examId + " a " + newState);
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
@@ -103,6 +92,9 @@ public class DBService {
             e.setState(Exam.State.valueOf(newState));
             entityManager.merge(e);
             entityManager.getTransaction().commit();
+
+        }catch(Exception ex) {
+            ex.printStackTrace();
         }finally {
             entityManager.close();
         }
@@ -127,8 +119,6 @@ public class DBService {
             return null;
         }
     }
-
-
 
     private ExamRegistration getExamRegistration(EntityManager entityManager, int studentId, int examId){
         try {

@@ -1,5 +1,6 @@
 package main.java.client.view;
 
+import main.java.client.ClientObserver;
 import main.java.client.ExamClientImpl;
 import main.java.common.entities.Exam;
 import main.java.common.exceptions.ExamInProgressException;
@@ -19,7 +20,7 @@ import java.util.List;
  * e partecipare a quelli in corso.
  * */
 
-public class ClientPanel extends JFrame {
+public class ClientPanel extends JFrame implements ClientObserver {
     private JButton btnRefresh;
     private JPanel container;
     private JPanel availableExams;
@@ -29,10 +30,10 @@ public class ClientPanel extends JFrame {
     public ClientPanel(ServerIF server) {
         this.server = server;
         setTitle("EOL - Client");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         initComponents();
         showExams();
         setExtendedState(MAXIMIZED_BOTH);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
@@ -82,7 +83,6 @@ public class ClientPanel extends JFrame {
                 panel.add(new JLabel(e.toString()));
                 JButton button = new JButton("Iscriviti");
                 button.addActionListener((ev) -> {
-                    System.out.println("Iscrizione esame " + e);
                     subscribeExam(e.getId());
                 });
                 panel.add(button);
@@ -90,7 +90,6 @@ public class ClientPanel extends JFrame {
             }
             openedExams.removeAll();
             exams = server.getOpenedExams();
-            System.out.println("Esami aperti: " + exams.size());
             for(Exam e : exams) {
                 JPanel panel = new JPanel();
                 panel.add(new JLabel(e.toString()));
@@ -130,9 +129,11 @@ public class ClientPanel extends JFrame {
             try{
                 ExamServer examServer = server.joinExam(number, examId);
                 ExamClientImpl examClient = new ExamClientImpl(number, examServer);
+                examClient.attach(this);
                 new Thread(() -> {
                     examClient.setWindow(new ExamWindow(examClient));
                 }).start();
+                this.setVisible(false);
             }catch(StudentNotSubscribedException ex) {
                 JOptionPane.showMessageDialog(this, "Non sei iscritto a questo esame", "Errore", JOptionPane.ERROR_MESSAGE);
             }catch (RemoteException ex) {
@@ -157,5 +158,10 @@ public class ClientPanel extends JFrame {
                 JOptionPane.showMessageDialog(this, "Risulti già iscritto!", "Attenzione", JOptionPane.WARNING_MESSAGE);
             }
         }
+    }
+
+    @Override
+    public void update(String state) {
+        if(state.equals("ENDED")) this.setVisible(true);
     }
 }

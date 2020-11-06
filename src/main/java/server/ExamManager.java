@@ -34,6 +34,7 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
             @Override
             public void entryAction(ExamManager manager) {
                 System.out.println("L'esame " + manager.exam.getName() + " è stato aperto.");
+                manager.updateState();
             }
 
             @Override
@@ -58,6 +59,7 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
             @Override
             public void entryAction(ExamManager manager) {
                 System.out.println("L'esame " + manager.exam.getName() + " è stato avviato.");
+                manager.updateState();
             }
 
             @Override
@@ -72,13 +74,14 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
             @Override
             public void entryAction(ExamManager manager) {
                 System.out.println("L'esame " + manager.exam.getName() + " è stato terminato.");
+                manager.updateState();
             }
         }
         ;
 
         @Override
         public void entryAction(ExamManager manager) {
-            manager.updateState();
+
         }
 
         @Override

@@ -10,7 +10,9 @@ import main.java.common.interfaces.ExamServer;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,12 +28,14 @@ public class ExamClientImpl implements ExamClient {
     private Exam exam;
     private Map<Question, Answer> answers;
     private ExamWindow window;
+    private List<ClientObserver> observers;
 
     public ExamClientImpl(int studentId, ExamServer server) throws RemoteException, ExamInProgressException {
         if(server == null) throw new ExamInProgressException();
         this.server = server;
         this.studentId = studentId;
         this.answers = new HashMap<>();
+        this.observers = new ArrayList<>();
         UnicastRemoteObject.exportObject(this, 1098);
         server.joinExam(this);
         this.exam = server.getExam();
@@ -50,10 +54,6 @@ public class ExamClientImpl implements ExamClient {
 
     @Override
     public void submitExam() throws RemoteException {
-        System.out.println("Invio ");
-        System.out.println(answers.size());
-        for(Answer a : answers.values())
-            System.out.println(a);
         server.submitResult(studentId, answers);
     }
 
@@ -68,11 +68,23 @@ public class ExamClientImpl implements ExamClient {
         if(state.equals("ENDED")){
             submitExam();
         }
-        window.update(state);
+        notifyObservers(state);
     }
-
 
     public void setAnswer(Question q, Answer a) {
         answers.put(q, a);
+    }
+
+    public void attach(ClientObserver observer) {
+        this.observers.add(observer);
+    }
+
+    public void detach(ClientObserver observer) {
+        this.observers.remove(observer);
+    }
+
+    private void notifyObservers(String s) {
+        for(ClientObserver observer : observers)
+            observer.update(s);
     }
 }

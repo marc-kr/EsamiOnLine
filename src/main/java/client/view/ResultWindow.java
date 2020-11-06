@@ -23,7 +23,6 @@ public class ResultWindow extends JFrame {
         this.exam = exam;
         this.answers = answers;
         setVisible(true);
-        setExtendedState(MAXIMIZED_BOTH);
         initComponents();
         showSolution();
         setExtendedState(MAXIMIZED_BOTH);

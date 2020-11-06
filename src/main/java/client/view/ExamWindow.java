@@ -1,5 +1,6 @@
 package main.java.client.view;
 
+import main.java.client.ClientObserver;
 import main.java.client.ExamClientImpl;
 import main.java.common.entities.Answer;
 import main.java.common.entities.Question;
@@ -7,7 +8,9 @@ import main.java.common.entities.Question;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +20,7 @@ import java.util.Collections;
  * @author Marco De Caria
  * Interfaccia grafica per lo svolgimento dell'esame
  */
-public class ExamWindow extends JFrame {
+public class ExamWindow extends JFrame implements ClientObserver {
     private ExamClientImpl client;
     private Thread timer;
     private JLabel lblExamTimeLeft;
@@ -26,9 +29,22 @@ public class ExamWindow extends JFrame {
 
     public ExamWindow(ExamClientImpl client) {
         this.client = client;
+        client.attach(this);
         initComponents();
         setTitle("Esame di " + client.getExam().getName());
         setExtendedState(MAXIMIZED_BOTH);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if(!timer.isInterrupted()){
+                    if(JOptionPane.showConfirmDialog(ExamWindow.this, "Uscendo verranno registrate le risposte finora date. Sicuro di voler uscire?",
+                            "Attenzione", JOptionPane.OK_CANCEL_OPTION) == 0){
+                        submitExam();
+                    }
+                }
+            }
+        });
         setVisible(true);
     }
 
@@ -64,13 +80,10 @@ public class ExamWindow extends JFrame {
     private void submitExam() {
         try {
             client.submitExam();
-            this.removeAll();
-            this.setContentPane(new JPanel(new BorderLayout()));
-            this.add(new JLabel("Attendi il termine della prova per visualizzare il risultato"), BorderLayout.CENTER);
+            endExam();
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(this, "Errore: " + e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
         }
-        //endExam();
     }
 
     private void showQuestions() {
@@ -108,14 +121,10 @@ public class ExamWindow extends JFrame {
         timer.start();
     }
 
+    @Override
     public void update(String state) {
-        switch (state) {
-            case "STARTED":
-                startExam();
-                break;
-            case "ENDED":
-                endExam();
-        }
+        if(state.equals("STARTED")) startExam();
+        else if(state.equals("ENDED")) endExam();
     }
 
     private void endExam() {

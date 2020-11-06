@@ -6,6 +6,9 @@ import main.java.server.ExamObserver;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.List;
 
 /**
@@ -26,7 +29,17 @@ public class ExamPanel extends JFrame implements ExamObserver {
         this.manager = manager;
         manager.attach(this);
         setExtendedState(MAXIMIZED_BOTH);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setVisible(true);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if(!manager.getState().equals("ENDED")){
+                    showMessageDialog("Attenzione", "Non puoi chiudere la finestra prima della conclusione della prova!", JOptionPane.WARNING_MESSAGE);
+                }
+                else dispose();
+            }
+        });
     }
 
     private void initComponents() {
@@ -146,5 +159,9 @@ public class ExamPanel extends JFrame implements ExamObserver {
         }
         studentsPanel.revalidate();
         studentsPanel.repaint();
+    }
+
+    private void showMessageDialog(String title, String message, int type) {
+        JOptionPane.showMessageDialog(this, message, title, type);
     }
 }

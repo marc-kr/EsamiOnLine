@@ -38,7 +38,6 @@ public class ServerPanel extends JFrame {
                     new Thread(() -> {
                         new ExamPanel(manager);
                     }).start();
-                    System.out.println("Avvio esame " + e);
                 }catch(Exception ex) {
                     ex.printStackTrace();
                 }
