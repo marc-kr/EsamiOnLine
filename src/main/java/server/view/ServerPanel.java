@@ -17,22 +17,17 @@ public class ServerPanel extends JFrame {
     private JPanel contentPane;
 
     public ServerPanel() {
-        setExtendedState(MAXIMIZED_BOTH);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
         setTitle("EOL - Server");
-        contentPane = new JPanel(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-        JButton button = new JButton("Aggiorna");
-        button.addActionListener((ev) -> {
-            showExams();
-        });
+        initComponents();
+        setExtendedState(MAXIMIZED_BOTH);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         showExams();
-        setContentPane(contentPane);
     }
 
     private void showExams() {
         List<Exam> examList = ServerEngine.getInstance().getAvailableExams();
-        contentPane.setLayout(new GridLayout(examList.size(), 1));
+        contentPane.removeAll();
         for(Exam e : examList) {
             JPanel examInfo = new JPanel();
             examInfo.add(new JLabel(e.toString()));
@@ -43,7 +38,6 @@ public class ServerPanel extends JFrame {
                     new Thread(() -> {
                         new ExamPanel(manager);
                     }).start();
-                    //TODO avvio esame
                     System.out.println("Avvio esame " + e);
                 }catch(Exception ex) {
                     ex.printStackTrace();
@@ -52,5 +46,29 @@ public class ServerPanel extends JFrame {
             examInfo.add(btnStart);
             contentPane.add(examInfo);
         }
+        revalidate();
+        repaint();
+    }
+
+    private void initComponents() {
+        JLabel label1 = new JLabel();
+        JButton btnRefresh = new JButton();
+        JScrollPane scrollPane1 = new JScrollPane();
+        contentPane = new JPanel();
+        setTitle("EOL - Server");
+        Container contentPane2 = getContentPane();
+        contentPane2.setLayout(new BorderLayout());
+        label1.setText("Esami programmati per oggi:");
+        contentPane2.add(label1, BorderLayout.NORTH);
+        btnRefresh.setText("Aggiorna");
+        contentPane2.add(btnRefresh, BorderLayout.SOUTH);
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        scrollPane1.setViewportView(contentPane);
+        contentPane2.add(scrollPane1, BorderLayout.CENTER);
+        btnRefresh.addActionListener((ev) -> {
+            showExams();
+        });
+        pack();
+        setLocationRelativeTo(getOwner());
     }
 }

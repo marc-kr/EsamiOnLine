@@ -28,12 +28,13 @@ public class ExamClientImpl implements ExamClient {
     private ExamWindow window;
 
     public ExamClientImpl(int studentId, ExamServer server) throws RemoteException, ExamInProgressException {
+        if(server == null) throw new ExamInProgressException();
         this.server = server;
         this.studentId = studentId;
-        this.exam = server.getExam();
         this.answers = new HashMap<>();
         UnicastRemoteObject.exportObject(this, 1098);
         server.joinExam(this);
+        this.exam = server.getExam();
     }
 
     public void setWindow(ExamWindow window) {

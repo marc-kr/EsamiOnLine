@@ -20,7 +20,7 @@ import java.util.Map;
  * e avvia gli esami delegandone la gestione a istanze di ExamServer
  * */
 
-public class ServerEngine extends UnicastRemoteObject implements ServerIF {
+public class ServerEngine extends UnicastRemoteObject implements ServerIF, ExamObserver {
     private Map<Exam, ExamServer> openedExams;
     private static ServerEngine instance;
 
@@ -70,12 +70,16 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF {
         Exam e = DBService.getInstance().getExam(examId);
         System.out.println("Creo ExamManager");
         ExamManager manager = new ExamManager(e);
+        manager.attach(this);
         openedExams.put(e, manager);
         return manager;
     }
 
-    public void endExam(int examId) {
-        openedExams.remove(examId);
+    @Override
+    public void update(ExamManager examManager) {
+        if(examManager.getState().equals("STARTED") || examManager.getState().equals("ENDED")) {
+            System.out.println("L'esame " + examManager.getExam().getName() + " è iniziato/terminato");
+            this.openedExams.remove(examManager.getExam());
+        }
     }
-
 }

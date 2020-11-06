@@ -1,9 +1,12 @@
 package main.java.server.view;
 
+import main.java.common.interfaces.ExamClient;
 import main.java.server.ExamManager;
+import main.java.server.ExamObserver;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 /**
  * @Author Marco De Caria
@@ -11,7 +14,7 @@ import java.awt.*;
  * avviare e terminare l'esame forzando la consegna da parte degli studenti.
  * */
 
-public class ExamPanel extends JFrame {
+public class ExamPanel extends JFrame implements ExamObserver {
     private ExamManager manager;
     private int timeLeft;
     private Thread timer;
@@ -21,6 +24,7 @@ public class ExamPanel extends JFrame {
         setTitle(manager.getExam().getName());
         initComponents();
         this.manager = manager;
+        manager.attach(this);
         setExtendedState(MAXIMIZED_BOTH);
         setVisible(true);
     }
@@ -124,4 +128,23 @@ public class ExamPanel extends JFrame {
     private JPanel panel3;
     private JLabel label2;
     private JLabel lblTimeLeft;
+
+    @Override
+    public void update(ExamManager examManager) {
+        if(examManager.getStudents().size() != studentCount) {
+            System.out.println("Uno studente è entrato/uscito. Aggiorno la lista");
+            studentCount = examManager.getStudents().size();
+            refreshStudentsList(examManager.getStudents());
+        }
+    }
+
+    private void refreshStudentsList(List<Integer> students) {
+        lblStudentsNumber.setText("" + studentCount);
+        studentsPanel.removeAll();
+        for(int id : students) {
+            studentsPanel.add(new JLabel("" + id));
+        }
+        studentsPanel.revalidate();
+        studentsPanel.repaint();
+    }
 }

@@ -1,6 +1,5 @@
 package main.java.server;
 
-
 import main.java.common.entities.Answer;
 import main.java.common.entities.Exam;
 import main.java.common.entities.Question;
@@ -8,13 +7,9 @@ import main.java.common.exceptions.ExamInProgressException;
 import main.java.common.interfaces.ExamClient;
 import main.java.common.interfaces.ExamServer;
 import main.java.server.services.DBService;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author Marco De Caria
@@ -22,10 +17,6 @@ import java.util.Map;
  * */
 
 public class ExamManager extends UnicastRemoteObject implements ExamServer {
-    private enum State {
-        OPENED, STARTED, ENDED;
-    };
-
     private interface ExamStateIF {
         void entryAction(ExamManager manager);
         void exitAction(ExamManager manager);
@@ -41,8 +32,18 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
          * */
         OPENED{
             @Override
-            public void addStudent(ExamManager manager, ExamClient student) throws ExamInProgressException {
-                manager.students.add(student);
+            public void entryAction(ExamManager manager) {
+                System.out.println("L'esame " + manager.exam.getName() + " è stato aperto.");
+            }
+
+            @Override
+            public void addStudent(ExamManager manager, ExamClient student){
+                try {
+                    manager.students.put(student.getStudentId(), student);
+                    manager.notifyObservers();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -55,6 +56,11 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
          * */
         STARTED{
             @Override
+            public void entryAction(ExamManager manager) {
+                System.out.println("L'esame " + manager.exam.getName() + " è stato avviato.");
+            }
+
+            @Override
             public void end(ExamManager manager) {
                 manager.transition(ENDED);
             }
@@ -63,6 +69,10 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
          * Stato in cui l'esame è terminato e i risultati vengono registrati
          * */
         ENDED{
+            @Override
+            public void entryAction(ExamManager manager) {
+                System.out.println("L'esame " + manager.exam.getName() + " è stato terminato.");
+            }
         }
         ;
 
@@ -97,22 +107,21 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
         }
     }
 
-    private final List<ExamClient> students;
+    private Map<Integer, ExamClient> students;
     private Exam exam;
-    private State state;
     private ExamStateIF currentState;
+    private List<ExamObserver> observers;
 
     public ExamManager(Exam exam) throws RemoteException{
         super();
         this.exam = exam;
-        students = new ArrayList<>();
-        state = State.OPENED;
+        students = new HashMap<>();
+        observers = new ArrayList<>();
         transition(ExamState.OPENED);
-        System.out.println("Creato oggetto" + this);
     }
 
     @Override
-    public void joinExam(ExamClient client) throws RemoteException, ExamInProgressException {
+    public void joinExam(ExamClient client) throws ExamInProgressException {
         currentState.addStudent(this, client);
     }
 
@@ -127,6 +136,8 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
             else if(answer.getCorrect()) res += 3;
         }
         DBService.getInstance().registerResult(exam.getId(), studentId, res, answers);
+        students.remove(studentId);
+        notifyObservers();
     }
 
     public Exam getExam() {
@@ -143,14 +154,14 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
         currentState.end(this);
     }
 
-    public List<ExamClient> getStudents() {
-        return students;
+    public List<Integer> getStudents() {
+        return new ArrayList<>(students.keySet());
     }
 
     private void updateClients(String state) {
         System.out.println(this);
         System.out.println("Notifico i " + students.size() + " studenti");
-        for(ExamClient client : students) {
+        for(ExamClient client : students.values()) {
             try {
                 client.update(state);
             } catch (RemoteException e) {
@@ -160,6 +171,7 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
     }
 
     public void updateState() {
+        notifyObservers();
         updateClients(currentState.getName());
         DBService.getInstance().updateExamState(exam.getId(), currentState.getName());
     }
@@ -170,4 +182,22 @@ public class ExamManager extends UnicastRemoteObject implements ExamServer {
         currentState = nextState;
         currentState.entryAction(this);
     }
+
+    public void attach(ExamObserver observer) {
+        observers.add(observer);
+    }
+
+    public void detach(ExamObserver observer) {
+        observers.remove(observer);
+    }
+
+    public String getState() {
+        return currentState.getName();
+    }
+
+    void notifyObservers() {
+        for(ExamObserver observer : observers)
+            observer.update(this);
+    }
+
 }
