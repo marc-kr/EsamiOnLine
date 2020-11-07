@@ -40,7 +40,7 @@ public class DBService {
     /**
      * Registra uno studente per partecipare a un esame
      * */
-    public void subscribeStudent(int studentId, int examId) {
+    public ExamRegistration subscribeStudent(int studentId, int examId) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
@@ -51,6 +51,9 @@ public class DBService {
             registration.setResult(-1);
             entityManager.persist(registration);
             entityManager.getTransaction().commit();
+            return registration;
+        }catch(Exception ex) {
+            return null;
         }finally {
             entityManager.close();
         }

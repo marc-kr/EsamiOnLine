@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
@@ -106,7 +105,7 @@ public class ExamWindow extends JFrame implements ClientObserver {
 
     private void startTimer() {
         timer = new Thread(() -> {
-            int timeLeft = client.getExam().getDuration();
+            int timeLeft = client.getExam().getAllowedTime();
             try {
                 while(timeLeft > 0) {
                     lblExamTimeLeft.setText(String.format("%02d:%02d", timeLeft / 60,timeLeft%60));
@@ -130,7 +129,7 @@ public class ExamWindow extends JFrame implements ClientObserver {
     private void endExam() {
         timer.interrupt();
         new ResultWindow(client.getExam(), client.getResult()).setTitle("Risultato esame di " + client.getExam().getName());
-        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        this.dispose();
     }
 
     /**

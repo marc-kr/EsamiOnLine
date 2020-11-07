@@ -1,6 +1,5 @@
 package main.java.client;
 
-import main.java.client.view.ExamWindow;
 import main.java.common.entities.Answer;
 import main.java.common.entities.Exam;
 import main.java.common.entities.Question;
@@ -27,7 +26,6 @@ public class ExamClientImpl implements ExamClient {
     private int studentId;
     private Exam exam;
     private Map<Question, Answer> answers;
-    private ExamWindow window;
     private List<ClientObserver> observers;
 
     public ExamClientImpl(int studentId, ExamServer server) throws RemoteException, ExamInProgressException {
@@ -39,10 +37,6 @@ public class ExamClientImpl implements ExamClient {
         UnicastRemoteObject.exportObject(this, 1098);
         server.joinExam(this);
         this.exam = server.getExam();
-    }
-
-    public void setWindow(ExamWindow window) {
-        this.window = window;
     }
 
     public Exam getExam() { return exam; }

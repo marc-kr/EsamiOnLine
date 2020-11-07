@@ -1,6 +1,5 @@
 package main.java.server.view;
 
-import main.java.common.interfaces.ExamClient;
 import main.java.server.ExamManager;
 import main.java.server.ExamObserver;
 
@@ -8,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.List;
 
 /**
@@ -110,7 +108,7 @@ public class ExamPanel extends JFrame implements ExamObserver {
     }
 
     private void startTimer() {
-        int duration = manager.getExam().getDuration();
+        int duration = manager.getExam().getAllowedTime();
         timeLeft = duration;
         timer = new Thread(() -> {
             while(timeLeft > 0) {

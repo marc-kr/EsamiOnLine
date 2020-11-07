@@ -131,7 +131,7 @@ public class ClientPanel extends JFrame implements ClientObserver {
                 ExamClientImpl examClient = new ExamClientImpl(number, examServer);
                 examClient.attach(this);
                 new Thread(() -> {
-                    examClient.setWindow(new ExamWindow(examClient));
+                    new ExamWindow(examClient);
                 }).start();
                 this.setVisible(false);
             }catch(StudentNotSubscribedException ex) {

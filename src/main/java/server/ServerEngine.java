@@ -47,14 +47,15 @@ public class ServerEngine extends UnicastRemoteObject implements ServerIF, ExamO
 
     @Override
     public List<Exam> getOpenedExams() throws RemoteException {
-        return new ArrayList<Exam>(openedExams.keySet());
+        return new ArrayList<>(openedExams.keySet());
     }
 
     @Override
     public boolean subscribeToExam(int studentId, int examId) throws StudentAlreadySubscribedException {
         if(DBService.getInstance().isStudentSubscribed(studentId, examId)) throw new StudentAlreadySubscribedException();
-        DBService.getInstance().subscribeStudent(studentId, examId);
-        return true;
+        if(DBService.getInstance().subscribeStudent(studentId, examId) != null)
+            return true;
+        return false;
     }
 
     @Override

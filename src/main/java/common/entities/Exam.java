@@ -2,9 +2,7 @@ package main.java.common.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +20,7 @@ public class Exam implements Serializable {
     private Integer id;
     private String name;
     private Date examDate;
-    private Integer duration;
+    private Integer allowedTime;
     private String description;
     private List<Question> questions;
     private State state;
@@ -67,13 +65,13 @@ public class Exam implements Serializable {
     }
 
     @Basic
-    @Column(name = "duration", nullable = false)
-    public Integer getDuration() {
-        return duration;
+    @Column(name = "allowed_time", nullable = false)
+    public Integer getAllowedTime() {
+        return allowedTime;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public void setAllowedTime(Integer duration) {
+        this.allowedTime = duration;
     }
 
     @Basic
